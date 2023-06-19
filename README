@@ -1,0 +1,9 @@
+Color Adjustment Solution for Theme Optimisation Requests 
+or
+CASTOR
+
+The goal of this project is to implement a C++ solution allowing anyone to change the color palette of an image, while keeping it as high resolution as possible.
+
+Indeed, there are many ways and website allowing anyone to extract colors from a given image, but almost none to apply a selected color palette to an image. Our goal is to try and fill that void, to allow any Linux enthusiast to easily match his favorite background illustration to his favorite terminal/OS theme. 
+
+We based our work on the K-Means algorithm, and may explore more modern approaches if given the time.
