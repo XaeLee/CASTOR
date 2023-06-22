@@ -7,3 +7,11 @@ The goal of this project is to implement a C++ solution allowing anyone to chang
 Indeed, there are many ways and website allowing anyone to extract colors from a given image, but almost none to apply a selected color palette to an image. Our goal is to try and fill that void, to allow any Linux enthusiast to easily match his favorite background illustration to his favorite terminal/OS theme. 
 
 We based our work on the K-Means algorithm, and may explore more modern approaches if given the time.
+
+# RUNNING THE PROJECT
+
+In the basic directory, run :
+```qmake -o Makefile castor.pro```
+This will generate the up-to-date Makefile for the project.
+You can then just proceed to :
+```make```
