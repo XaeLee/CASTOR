@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <qt5/QtGui/qcolor.h>
@@ -9,8 +11,10 @@ private:
     int nbColors;
     vector<QRgb> colors;
 public:
-    vector<QRgb> getColor();
+    void addColor(QRgb c);
+    vector<QRgb> getColors();
     void display();
     palette OpenPalette(string filename);
+    int getColorCount();
     ~palette();
 };

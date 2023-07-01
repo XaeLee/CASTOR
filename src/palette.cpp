@@ -30,13 +30,29 @@ palette palette::OpenPalette(string filename){
     } else {
         cout << "Could not open file " << filename << endl;
     }
-    this->nbColors = count + 1;
+    this->nbColors = count;
     this->colors = pal;
     return *this;
 }
 
 void palette::display(){
     for (int i = 0; i < nbColors; i++){
-        cout << this->colors[i] << endl;
+        QRgb curr = this->colors[i];
+        cout << qRed(curr) << " " << qGreen(curr) << " " << qBlue(curr) << endl;
     }
+}
+
+void palette::addColor(QRgb c){
+    this->colors.push_back(c);
+}
+
+vector<QRgb> palette::getColors(){
+    return this->colors;
+}
+
+int palette::getColorCount(){
+    return this->colors.size();
+}
+palette::~palette(){
+    
 }
