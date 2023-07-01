@@ -6,7 +6,7 @@ The goal of this project is to implement a C++ solution allowing anyone to chang
 
 Indeed, there are many ways and website allowing anyone to extract colors from a given image, but almost none to apply a selected color palette to an image. Our goal is to try and fill that void, to allow any Linux enthusiast to easily match his favorite background illustration to his favorite terminal/OS theme. 
 
-We based our work on the K-Means algorithm, and may explore more modern approaches if given the time.
+We based our work on the median cut algorithm, and may explore more modern approaches if given the time.
 
 # RUNNING THE PROJECT
 
