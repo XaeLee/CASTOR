@@ -1,9 +1,8 @@
-HEADERS += src/colorReduction.h
-HEADERS += src/image.h
+HEADERS += src/engine.h
 HEADERS += src/palette.h
 
-SOURCES += src/colorReduction.cpp
-SOURCES += src/image.cpp
+SOURCES += src/engine.cpp
+SOURCES += src/mediancut.cpp
 SOURCES += src/palette.cpp
 SOURCES += src/main.cpp
 

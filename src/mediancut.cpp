@@ -1,48 +1,10 @@
-#include "image.h"
-#include <iostream>
+#include "engine.h"
 
-using namespace std;
-
-int color_distance(QRgb p1, QRgb p2){
-    int r1 = qRed(p1);
-    int g1 = qGreen(p1);
-    int b1 = qBlue(p1);
-
-    int r2 = qRed(p2);
-    int g2 = qGreen(p2);
-    int b2 = qBlue(p2);
-
-    return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2);
-}
-
-QRgb match(QRgb base, palette p){
-    int index = 0;
-    int current_distance = INT_MAX;
-    vector<QRgb> cols = p.getColors();
-    for (int i = 0; i<cols.size(); i++){
-        int dist = color_distance(base, cols.at(i));
-        if (dist < current_distance){
-            current_distance = dist;
-            index = i;
-        }
-    }
-    return cols[index];
-}
-
-image::image(string filename){
-    this->original = QImage(filename.c_str());
-    this->color_count = -1;
-}
-
-image::~image(){
-
-}
-
-palette image::ExtractPalette(int n){
+palette engine::ExtractPaletteMEDIAN(int n){
     if (n < 2)
         throw std::invalid_argument("n must be > 1 for color reduction");
     if (n == this->color_count){
-        return this->origiPal;
+        return this->ediPal;
     }
     palette res;
 
@@ -107,7 +69,7 @@ palette image::ExtractPalette(int n){
     return res;
 }
 
-void image::ReduceColors(int n){
+void engine::ReduceColorsMEDIAN(int n){
     if (n < 2)
         throw std::invalid_argument("n must be > 1 for color reduction");
     palette res;
@@ -171,7 +133,7 @@ void image::ReduceColors(int n){
         res.addColor(curr.at(curr.size()/2));
     }
     
-    this->origiPal = res;
+    this->ediPal = res;
 
     QImage out(nbCols, nbRows, QImage::Format_ARGB32);
     for (int x = 0; x < nbCols; x++){
@@ -185,11 +147,11 @@ void image::ReduceColors(int n){
     this->color_count = n;
 }
 
-void image::AdaptToPaletteClosest(palette p, int n){
+void engine::AdaptToPaletteClosestMEDIAN(palette p, int n){
     if (n < 2)
         throw std::invalid_argument("n must be > 1 for color reduction");
     if (n != this->color_count)
-        this->ReduceColors(n);
+        this->ReduceColorsMEDIAN(n);
     int nbCols = this->original.width();
     int nbRows = this->original.height();
     
@@ -199,8 +161,4 @@ void image::AdaptToPaletteClosest(palette p, int n){
             this->edited.setPixel(x, y, m);
         }
     }
-}
-
-void image::saveEdit(string filename){
-    this->edited.save(filename.c_str());
 }

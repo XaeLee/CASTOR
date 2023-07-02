@@ -7,7 +7,8 @@
 #include "palette.h"
 
 using namespace std;
-class image
+enum {MEDIAN_CUT, };
+class engine
 {
 private:
     //original loaded image
@@ -16,24 +17,31 @@ private:
     QImage edited;
     //number of colors in edited image, -1 if never edited
     int color_count;
-    //palette in use for edited
-    palette origiPal;
+    //
+    int usedAlgo;
+    //palette in use
+    palette ediPal;
+
+
+    palette ExtractPaletteMEDIAN(int n);
+    void ReduceColorsMEDIAN(int n);
+    void AdaptToPaletteClosestMEDIAN(palette p, int n);
 
 public:
     /**
      * extracts color palette from original image with n colors.
      * n must be > 1
      * if n == color_count, returns origiPal.
-     * else, processes KMeans on original to extract colors - does NOT edit edited.
+     * else, processes algo algotype on original to extract colors - does NOT edit edited.
     */
-    palette ExtractPalette(int n);
+    palette ExtractPalette(int n, int algotype);
     
     /**
-     * Processes a KMeans on original image, writes edited as the output.
+     * Processes algo algotype on original image, writes edited as the output.
      * n must be > 1
      * changes color_count to n, rewrites origiPal.
     */
-    void ReduceColors(int n);
+    void ReduceColors(int n, int algotype);
 
     /**
      * Rewrites each pixel color from edited to match the closest color in p.
@@ -41,14 +49,14 @@ public:
      * if n != color_count, calls ReduceColors().
      * set colot_count to n
     */
-    void AdaptToPaletteClosest(palette p, int n);
+    void AdaptToPaletteClosest(palette p, int n, int algotype);
 
     /**
      * Saves edited image under name "filename" in current directory
     */
     void saveEdit(string filename);
-    image(string filename);
-    ~image();
+    engine(string filename);
+    ~engine();
 };
 
 QRgb match(QRgb base, palette p);
