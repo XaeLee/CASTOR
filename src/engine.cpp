@@ -57,6 +57,21 @@ void engine::AdaptToPaletteClosest(palette p, int matchType){
     case DI_NOISE:
         this->AdaptToPaletteClosestNoise(p);
         break;
+    case DI_JARVISJN:
+        this->AdaptToPaletteClosestJarvis(p);
+        break;
+    case DI_ATKINSON:
+        this->AdaptToPaletteClosestAtkinson(p);
+        break;
+    case DI_SIERRA:
+        this->AdaptToPaletteClosestSierra(p);
+        break;
+    case DI_SIERRA_TWO_ROW:
+        this->AdaptToPaletteClosestSierraTwoRows(p);
+        break;
+    case DI_SIERRA_LITE:
+        this->AdaptToPaletteClosestSierraLite(p);
+        break;
     default:
         cout << "please provide a valid algorithm type" << endl;
         break;
