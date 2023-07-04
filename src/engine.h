@@ -58,6 +58,7 @@ public:
     */
     void AdaptToPaletteClosest(palette p, int matchType);
 
+
     /**
      * Saves edited image under name "filename" in current directory
     */
