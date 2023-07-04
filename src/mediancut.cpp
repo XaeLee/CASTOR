@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "colorMatching.h"
 
 palette engine::ExtractPaletteMEDIAN(int n){
     if (n < 2)
@@ -138,25 +139,12 @@ void engine::ReduceColorsMEDIAN(int n){
 
     QImage out(nbCols, nbRows, QImage::Format_ARGB32);
     for (int x = 0; x < nbCols; x++){
-        for (int y = 0; y < nbCols; y++){
-            QRgb m = match(original.pixel(x, y), res);
+        for (int y = 0; y < nbRows; y++){
+            QRgb m = matchBasic(original.pixel(x, y), res);
             out.setPixel(x, y, m);
         }
     }
 
     this->edited = out;
     this->color_count = n;
-}
-
-void engine::AdaptToPaletteClosestMEDIAN(palette p){
-    int nbCols = this->original.width();
-    int nbRows = this->original.height();
-    
-    for (int x = 0; x < nbCols; x++){
-        for (int y = 0; y < nbCols; y++){
-            QRgb m = match(original.pixel(x, y), p);
-            this->edited.setPixel(x, y, m);
-        }
-    }
-    this->usedAlgo = MEDIAN_CUT;
 }

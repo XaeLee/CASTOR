@@ -14,7 +14,9 @@ int main(int argc, char** argv){
     p = p.OpenPalette(argv[1]);
     p.display();
     engine img("examples/castor.jpg");
-    img.AdaptToPaletteClosest(p, p.getColorCount());
-    img.saveEdit("output/castorMypal.jpg");
+    img.ReduceColors(6, MEDIAN_CUT);
+    //p = img.ExtractPalette(15, MEDIAN_CUT);
+    img.AdaptToPaletteClosest(p, DI_FLOYD_STEINBERG);
+    img.saveEdit("output/castorMypalFLOYD.jpg");
     return 0;
 }
