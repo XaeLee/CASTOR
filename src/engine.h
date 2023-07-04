@@ -7,12 +7,16 @@
 #include "palette.h"
 
 using namespace std;
-enum {MEDIAN_CUT, DI_FLOYD_STEINBERG};
+enum algoType {MEDIAN_CUT,};
+enum matchType {BASIC, DI_FLOYD_STEINBERG,};
+
 class engine
 {
 private:
     //original loaded image
     QImage original;
+    //copy of original for dithering manips
+    QImage cpy;
     //edited image
     QImage edited;
     //number of colors in edited image, -1 if never edited
@@ -23,13 +27,14 @@ private:
     //palette in use
     palette ediPal;
 
-    //Functions using Median cut algorithm
+    //Color Reduction / Extraction Functions using Median cut algorithm
     palette ExtractPaletteMEDIAN(int n);
     void ReduceColorsMEDIAN(int n);
-    void AdaptToPaletteClosestMEDIAN(palette p, int n);
 
+    // Simple matching from edited image to palette
+    void AdaptToPaletteClosestNeutral(palette p);
     //Dithering algos
-    void AdaptToPaletteClosestDithering(palette p, int dithering_method);
+    void AdaptToPaletteClosestFloyd_Steinberg(palette p);
 
 public:
     /**
@@ -49,8 +54,9 @@ public:
 
     /**
      * Rewrites each pixel color from edited to match the closest color in p.
+     * Method depends on the matchType - see enumeration above
     */
-    void AdaptToPaletteClosest(palette p, int algotype);
+    void AdaptToPaletteClosest(palette p, int matchType);
 
     /**
      * Saves edited image under name "filename" in current directory
