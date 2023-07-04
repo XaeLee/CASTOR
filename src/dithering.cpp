@@ -13,6 +13,18 @@ QRgb add_rgb(QRgb pix, QRgb error, float fact){
     blue = blue > 255 ? 255 : blue;
     return QColor(red, green, blue).rgb();
 }
+
+QRgb add_to_rgb(QRgb pix, float f){
+    int red = qRed(pix) + f;
+    red = red > 255 ? 255 : red;
+    int green = qGreen(pix) + f;
+    green = green > 255 ? 255 : green;
+    int blue = qBlue(pix) + f;
+    blue = blue > 255 ? 255 : blue;
+    return QColor(red, green, blue).rgb();
+
+}
+
 void engine::AdaptToPaletteClosestNeutral(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -21,6 +33,19 @@ void engine::AdaptToPaletteClosestNeutral(palette p){
         for (int y = 0; y < nbRows; y++){
             QRgb m = matchBasic(original.pixel(x, y), p);
             this->edited.setPixel(x, y, m);
+        }
+    }
+}
+
+void engine::AdaptToPaletteClosestNoise(palette p){
+    int nbCols = this->original.width();
+    int nbRows = this->original.height();
+    
+    for (int x = 0; x < nbCols; x++){
+        for (int y = 0; y < nbRows; y++){
+            float random = rand() % 200 / 10.0 - 10;
+            QRgb newpix = matchBasic(original.pixel(x, y), p);
+            this->edited.setPixel(x, y, newpix);
         }
     }
 }

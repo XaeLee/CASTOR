@@ -49,6 +49,9 @@ void engine::AdaptToPaletteClosest(palette p, int matchType){
     case DI_FLOYD_STEINBERG:
         this->AdaptToPaletteClosestFloyd_Steinberg(p);
         break;
+    case DI_NOISE:
+        this->AdaptToPaletteClosestNoise(p);
+        break;
     default:
         cout << "please provide a valid algorithm type" << endl;
         break;

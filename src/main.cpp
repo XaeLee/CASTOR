@@ -10,13 +10,14 @@ int main(int argc, char** argv){
         cout << "Expected file to read palette from" << endl;
         return -1;
     }
+    srand(time(NULL));
     palette p;
     p = p.OpenPalette(argv[1]);
     p.display();
-    engine img("examples/castor.jpg");
-    img.ReduceColors(6, MEDIAN_CUT);
-    //p = img.ExtractPalette(15, MEDIAN_CUT);
-    img.AdaptToPaletteClosest(p, DI_FLOYD_STEINBERG);
-    img.saveEdit("output/castorMypalFLOYD.jpg");
+    engine img("examples/smallgradient.jpg");
+    img.ReduceColors(15, MEDIAN_CUT);
+    p = img.ExtractPalette(15, MEDIAN_CUT);
+    img.AdaptToPaletteClosest(p, DI_NOISE);
+    img.saveEdit("output/gradientNOISE15.jpg");
     return 0;
 }

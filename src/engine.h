@@ -8,7 +8,7 @@
 
 using namespace std;
 enum algoType {MEDIAN_CUT,};
-enum matchType {BASIC, DI_FLOYD_STEINBERG,};
+enum matchType {BASIC, DI_FLOYD_STEINBERG, DI_NOISE, };
 
 class engine
 {
@@ -35,6 +35,7 @@ private:
     void AdaptToPaletteClosestNeutral(palette p);
     //Dithering algos
     void AdaptToPaletteClosestFloyd_Steinberg(palette p);
+    void AdaptToPaletteClosestNoise(palette p);
 
 public:
     /**
