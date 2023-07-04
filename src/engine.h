@@ -26,7 +26,7 @@ private:
 
     palette ExtractPaletteMEDIAN(int n);
     void ReduceColorsMEDIAN(int n);
-    void AdaptToPaletteClosestMEDIAN(palette p, int n);
+    void AdaptToPaletteClosestMEDIAN(palette p);
 
 public:
     /**
@@ -46,11 +46,8 @@ public:
 
     /**
      * Rewrites each pixel color from edited to match the closest color in p.
-     * n must be > 1
-     * if n != color_count, calls ReduceColors().
-     * set colot_count to n
     */
-    void AdaptToPaletteClosest(palette p, int n, int algotype);
+    void AdaptToPaletteClosest(palette p, int algotype);
 
     /**
      * Saves edited image under name "filename" in current directory

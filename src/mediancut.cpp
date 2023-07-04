@@ -148,11 +148,7 @@ void engine::ReduceColorsMEDIAN(int n){
     this->color_count = n;
 }
 
-void engine::AdaptToPaletteClosestMEDIAN(palette p, int n){
-    if (n < 2)
-        throw std::invalid_argument("n must be > 1 for color reduction");
-    if (n != this->color_count)
-        this->ReduceColorsMEDIAN(n);
+void engine::AdaptToPaletteClosestMEDIAN(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
     
