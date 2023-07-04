@@ -8,6 +8,11 @@ engine::engine(string filename){
     this->color_count = -1;
 }
 
+engine::engine(QImage img){
+    this->original = img;
+    this->color_count = -1;
+}
+
 engine::~engine(){
 
 }

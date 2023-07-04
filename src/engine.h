@@ -13,12 +13,6 @@ enum matchType {BASIC, DI_FLOYD_STEINBERG, DI_NOISE, };
 class engine
 {
 private:
-    //original loaded image
-    QImage original;
-    //copy of original for dithering manips
-    QImage cpy;
-    //edited image
-    QImage edited;
     //number of colors in edited image, -1 if never edited
     int color_count;
     //
@@ -38,6 +32,12 @@ private:
     void AdaptToPaletteClosestNoise(palette p);
 
 public:
+    //original loaded image
+    QImage original;
+    //copy of original for dithering manips
+    QImage cpy;
+    //edited image
+    QImage edited;
     /**
      * extracts color palette from original image with n colors.
      * n must be > 1
@@ -65,6 +65,7 @@ public:
     */
     void saveEdit(string filename);
     engine(string filename);
+    engine(QImage img);
     ~engine();
 };
 
