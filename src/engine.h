@@ -19,6 +19,7 @@ private:
     int color_count;
     //
     int usedAlgo;
+
     //palette in use
     palette ediPal;
 
@@ -31,15 +32,15 @@ public:
     /**
      * extracts color palette from original image with n colors.
      * n must be > 1
-     * if n == color_count, returns origiPal.
-     * else, processes algo algotype on original to extract colors - does NOT edit edited.
+     * if n == color_count, returns ediPal
+     * else, processes algo algotype on original to extract colors - does NOT edit edited, does NOT edit ediPal.
     */
     palette ExtractPalette(int n, int algotype);
     
     /**
      * Processes algo algotype on original image, writes edited as the output.
      * n must be > 1
-     * changes color_count to n, rewrites origiPal.
+     * changes color_count to n, rewrites ediPal.
     */
     void ReduceColors(int n, int algotype);
 

@@ -134,6 +134,7 @@ void engine::ReduceColorsMEDIAN(int n){
     }
     
     this->ediPal = res;
+    this->usedAlgo = MEDIAN_CUT;
 
     QImage out(nbCols, nbRows, QImage::Format_ARGB32);
     for (int x = 0; x < nbCols; x++){
@@ -161,4 +162,5 @@ void engine::AdaptToPaletteClosestMEDIAN(palette p, int n){
             this->edited.setPixel(x, y, m);
         }
     }
+    this->usedAlgo = MEDIAN_CUT;
 }
