@@ -1,5 +1,5 @@
 #include "palette.h"
-#include "image.h"
+#include "engine.h"
 #include <iostream>
 
 using namespace std;
@@ -13,8 +13,8 @@ int main(int argc, char** argv){
     palette p;
     p = p.OpenPalette(argv[1]);
     p.display();
-    image img("examples/castor.jpg");
-    img.AdaptToPaletteClosest(p, p.getColorCount());
+    engine img("examples/castor.jpg");
+    img.AdaptToPaletteClosest(p, p.getColorCount(), MEDIAN_CUT);
     img.saveEdit("output/castorMypal.jpg");
     return 0;
 }
