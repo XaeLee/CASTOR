@@ -15,12 +15,14 @@ int main(int argc, char** argv){
     palette p;
     //p = p.OpenPalette(argv[1]);
     //p.display();
-    engine img("examples/testCube.jpg");
+    engine img("examples/castor.jpg");
 
-    img.ReduceColors(4, MEDIAN_CUT);
-    p = img.ExtractPalette(4, MEDIAN_CUT);
+    //p = img.ExtractPalette(7, OCTREE);
+    img.ReduceColors(255, OCTREE, BASIC);
+    //p = img.getPalette();
+    //cout << "palette has " << to_string(p.getColorCount()) << " color.s" << endl;
 
-    img.AdaptToPaletteClosest(p, DI_JARVISJN);
-    img.saveEdit("output/doublepass.jpg");
+    //p.display();
+    img.saveEdit("output/castorOCTREE255.jpg");
     return 0;
 }

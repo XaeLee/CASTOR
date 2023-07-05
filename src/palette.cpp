@@ -44,6 +44,7 @@ void palette::display(){
 
 void palette::addColor(QRgb c){
     this->colors.push_back(c);
+    this->nbColors++;
 }
 
 vector<QRgb> palette::getColors(){
@@ -53,6 +54,10 @@ vector<QRgb> palette::getColors(){
 int palette::getColorCount(){
     return this->colors.size();
 }
+palette::palette(){
+    this->nbColors = 0;
+}
+
 palette::~palette(){
     
 }

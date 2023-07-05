@@ -8,7 +8,7 @@ using namespace std;
 class palette
 {
 private:
-    int nbColors;
+    int nbColors = 0;
     vector<QRgb> colors;
 public:
     void addColor(QRgb c);
@@ -16,5 +16,6 @@ public:
     void display();
     palette OpenPalette(string filename);
     int getColorCount();
+    palette();
     ~palette();
 };

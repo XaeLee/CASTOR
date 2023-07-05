@@ -6,11 +6,13 @@ using namespace std;
 engine::engine(string filename){
     this->original = QImage(filename.c_str());
     this->color_count = -1;
+    this->edited = QImage(this->original.width(), this->original.height(), this->original.format());
 }
 
 engine::engine(QImage img){
     this->original = img;
     this->color_count = -1;
+    this->edited = QImage(this->original.width(), this->original.height(), this->original.format());
 }
 
 engine::~engine(){
@@ -27,17 +29,25 @@ palette engine::ExtractPalette(int n, int algotype){
     case MEDIAN_CUT:
         return this->ExtractPaletteMEDIAN(n);
         break;
+    case OCTREE:
+        return this->ExtractPaletteOctree(n);
+        break;
     default:
         cout << "please provide a valid algorithm type" << endl;
         break;
     }
 }
 
-void engine::ReduceColors(int n, int algotype){
+void engine::ReduceColors(int n, int algotype, int matchType){
     switch (algotype)
     {
     case MEDIAN_CUT:
-        this->ReduceColorsMEDIAN(n);
+        this->ReduceColorsMEDIAN(n, matchType);
+        this->usedalgotype = algotype;
+        break;
+    case OCTREE:
+        this->ReduceColorsOctree(n, matchType);
+        this->usedalgotype = algotype;
         break;
     default:
         cout << "please provide a valid algorithm type" << endl;
@@ -76,4 +86,16 @@ void engine::AdaptToPaletteClosest(palette p, int matchType){
         cout << "please provide a valid algorithm type" << endl;
         break;
     }
+}
+
+void engine::ReduceColorsOctree(int n, int matchType){
+    octree t(n);
+    this->ediPal = t.reduceColors(this->original);
+    cout << "done with reducting" << endl;
+    this->AdaptToPaletteClosest(ediPal, matchType);    
+}
+
+palette engine::ExtractPaletteOctree(int n){
+    octree t(n);
+    return t.reduceColors(this->original);
 }
