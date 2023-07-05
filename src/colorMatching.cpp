@@ -38,3 +38,20 @@ QRgb RGB_color_distance(QRgb p1, QRgb p2){
 
     return QColor(abs(r1 - r2), abs(g1 - g2),abs(b1 - b2)).rgb();
 }
+
+vector<float> error_rgb(QRgb p1, QRgb p2){
+    float r1 = qRed(p1);
+    float g1 = qGreen(p1);
+    float b1 = qBlue(p1);
+
+    float r2 = qRed(p2);
+    float g2 = qGreen(p2);
+    float b2 = qBlue(p2);
+
+    vector<float> res;
+    res.push_back(r1 - r2);
+    res.push_back(g1 - g2);
+    res.push_back(b1 - b2);
+
+    return res;
+}

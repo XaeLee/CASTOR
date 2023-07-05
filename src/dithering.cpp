@@ -9,8 +9,21 @@ QRgb add_rgb(QRgb pix, QRgb error, float fact){
     red = red > 255 ? 255 : red;
     int green = qGreen(pix) + qGreen(error) * fact;
     green = green > 255 ? 255 : green;
-    int blue = qBlue(pix) + +qBlue(error) * fact;
+    int blue = qBlue(pix) + qBlue(error) * fact;
     blue = blue > 255 ? 255 : blue;
+    return QColor(red, green, blue).rgb();
+}
+
+QRgb add_rgb(QRgb pix, vector<float> error, float fact){
+    int red = qRed(pix) + error[0] * fact;
+    red = red > 255 ? 255 : red;
+    red = red < 0 ? 0 : red;
+    int green = qGreen(pix) + error[1] * fact;
+    green = green > 255 ? 255 : green;
+    green = green < 0 ? 0 : green;
+    int blue = qBlue(pix) + error[2] * fact;
+    blue = blue > 255 ? 255 : blue;
+    blue = blue < 0 ? 0 : blue;
     return QColor(red, green, blue).rgb();
 }
 
@@ -67,7 +80,8 @@ void engine::AdaptToPaletteClosestFloyd_Steinberg(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            QRgb error = RGB_color_distance(oldpix, newpix);
+            //QRgb error = RGB_color_distance(oldpix, newpix);
+            vector<float> error = error_rgb(oldpix, newpix);
             if (x + 1 < nbCols){
                 if (y + 1 < nbRows)
                     cpy.setPixel(x + 1, y + 1, add_rgb(cpy.pixel(x + 1,y + 1), error, one));
@@ -98,7 +112,7 @@ void engine::AdaptToPaletteClosestJarvis(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            QRgb error = RGB_color_distance(oldpix, newpix);
+            vector<float> error = error_rgb(oldpix, newpix);
             if (y  + 2 < nbRows){
                 if (x - 2 > 0)
                     cpy.setPixel(x - 2, y + 2, add_rgb(cpy.pixel(x - 2,y + 2), error, one));
@@ -143,7 +157,7 @@ void engine::AdaptToPaletteClosestAtkinson(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            QRgb error = RGB_color_distance(oldpix, newpix);
+            vector<float> error = error_rgb(oldpix, newpix);
             if (y  + 2 < nbRows){
                 cpy.setPixel(x, y + 2, add_rgb(cpy.pixel(x,y + 2), error, one));
             }
@@ -178,7 +192,7 @@ void engine::AdaptToPaletteClosestSierra(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            QRgb error = RGB_color_distance(oldpix, newpix);
+            vector<float> error = error_rgb(oldpix, newpix);
             if (y  + 2 < nbRows){
                 if (x - 1 > 0)
                     cpy.setPixel(x - 1, y + 2, add_rgb(cpy.pixel(x - 1,y + 2), error, two));
@@ -220,7 +234,7 @@ void engine::AdaptToPaletteClosestSierraTwoRows(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            QRgb error = RGB_color_distance(oldpix, newpix);
+            vector<float> error = error_rgb(oldpix, newpix);
             if (y  + 1 < nbRows){
                 if (x - 2 > 0)
                     cpy.setPixel(x - 2, y + 1, add_rgb(cpy.pixel(x - 2,y + 1), error, one));
@@ -254,7 +268,7 @@ void engine::AdaptToPaletteClosestSierraLite(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            QRgb error = RGB_color_distance(oldpix, newpix);
+            vector<float> error = error_rgb(oldpix, newpix);
             if (y  + 1 < nbRows){
                 if (x - 1 > 0)
                     cpy.setPixel(x - 1, y + 1, add_rgb(cpy.pixel(x - 1,y + 1), error, one));
