@@ -15,12 +15,12 @@ int main(int argc, char** argv){
     palette p;
     //p = p.OpenPalette(argv[1]);
     //p.display();
-    engine img("outputIllustrations/median_cut30.jpg");
+    engine img("examples/testCube.jpg");
 
-    img.ReduceColors(30, MEDIAN_CUT);
-    p = img.ExtractPalette(30, MEDIAN_CUT);
+    img.ReduceColors(4, MEDIAN_CUT);
+    p = img.ExtractPalette(4, MEDIAN_CUT);
 
-    img.AdaptToPaletteClosest(p, BASIC);
+    img.AdaptToPaletteClosest(p, DI_JARVISJN);
     img.saveEdit("output/doublepass.jpg");
     return 0;
 }
