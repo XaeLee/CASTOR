@@ -33,7 +33,7 @@ private:
     ocnode *root;
     int currcolorsCount = 0;
     int wantedColors = 0;
-    int maxDepth = 8;
+    int maxDepth = 4;
 
     unsigned int MinReferenceCount;
     void getMinRefCount(ocnode *n);
