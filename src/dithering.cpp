@@ -50,6 +50,7 @@ void engine::AdaptToPaletteClosestNoise(palette p){
     }
 }
 
+//
 void engine::AdaptToPaletteClosestFloyd_Steinberg(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
