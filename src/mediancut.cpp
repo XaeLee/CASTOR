@@ -70,7 +70,7 @@ palette engine::ExtractPaletteMEDIAN(int n){
     return res;
 }
 
-void engine::ReduceColorsMEDIAN(int n){
+void engine::ReduceColorsMEDIAN(int n, int matchtype){
     if (n < 2)
         throw std::invalid_argument("n must be > 1 for color reduction");
     palette res;
@@ -135,16 +135,7 @@ void engine::ReduceColorsMEDIAN(int n){
     }
     
     this->ediPal = res;
-    this->usedAlgo = MEDIAN_CUT;
-
-    QImage out(nbCols, nbRows, QImage::Format_ARGB32);
-    for (int x = 0; x < nbCols; x++){
-        for (int y = 0; y < nbRows; y++){
-            QRgb m = matchBasic(original.pixel(x, y), res);
-            out.setPixel(x, y, m);
-        }
-    }
-
-    this->edited = out;
     this->color_count = n;
+
+    this->AdaptToPaletteClosest(ediPal, matchtype);
 }
