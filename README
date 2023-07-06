@@ -1,17 +1,33 @@
-Color Adjustment Solution for Theme Optimisation Requests 
+# CASTOR
 or
-CASTOR
+Color Adjustment Solution for Theme Optimisation Requests 
 
-The goal of this project is to implement a C++ solution allowing anyone to change the color palette of an image, while keeping it as high resolution as possible.
+## BRIEF
 
-Indeed, there are many ways and website allowing anyone to extract colors from a given image, but almost none to apply a selected color palette to an image. Our goal is to try and fill that void, to allow any Linux enthusiast to easily match his favorite background illustration to his favorite terminal/OS theme. 
+The goal of this project is to implement a C++ solution allowing anyone to change the color palette of an image easily.
 
-We based our work on the median cut algorithm, and may explore more modern approaches if given the time.
+Indeed, there are many ways and websites allowing anyone to extract colors from a given image, but almost none go further than this and allow users to apply a selected color palette to an image. Our goal is to try and fill that void, to allow any Linux enthusiast to easily match their favorite background illustration to their favorite terminal/OS theme. 
 
-# RUNNING THE PROJECT
+We present here two algorithms allowing to extract x representative colors from an image, based on either the Median-cut or octree method.
+
+Alongside are no less than 10 available algorithms for matching the image to a given color palette.
+You can find here a naive RGB match, error-propagation dithering and ordered dithering algorithms.
+
+You can load your palette from the color menu or by pressing the "adapt to palette button" for the first time - please note that the expected file format is a csv containing one "R, G, B" color per line, where r g and b range from 0 to 255.
+
+You can edit your palette directly from the interface, by adding colors and saving the modified version.
+
+Once you found an interesting result image, you can save it from the File menu.
+
+## RUNNING THE PROJECT
 
 In the basic directory, run :
 ```qmake -o Makefile castor.pro```
 This will generate the up-to-date Makefile for the project.
 You can then just proceed to :
 ```make```
+And then launch the GUI with :
+```./castor```
+
+The shortcut for image loading is Ctrl + O.
+Either check the "Fit to Window" box in the View menu or use shortcut Ctrl + F to enable image manipulation.
