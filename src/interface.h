@@ -30,9 +30,12 @@ private slots:
     //saves edit under a given filename
     //TODO
     void saveAs();
+    void savePalette();
     void fitToWindow();
     void normalSize();
-    
+    void addColor();
+    void resetPalette();
+
 private :
     void createMenus();
     void createActions();
@@ -56,13 +59,14 @@ private :
     */
     QPushButton *adaptToPalette;
     QPushButton *changePalette;
-    QPushButton *resetPalette;
 
     QComboBox *algoType;
     QComboBox *matchType;
 
     QAction *saveAsAct;
     QAction *fitToWindowAct;
+    QAction *savePaletteAct;
+    QAction *addColorAct;
 
     double scaleFactor = 1;
 public:

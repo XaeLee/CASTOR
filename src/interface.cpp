@@ -1,6 +1,7 @@
 #include "interface.h"
 
 #include <iostream>
+#include <QtWidgets/QColorDialog>
 
 int boxToAlgoType(int i)
 {
@@ -105,19 +106,6 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
                          eng.AdaptToPaletteClosest(p, mt);
                          this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
 
-    resetPalette = new QPushButton("&Reset Palette", editedLabel);
-    resetPalette->move(420, 600);
-    resetPalette->show();
-    QObject::connect(resetPalette, &QPushButton::clicked, [this]()
-                     {
-                         int mt = boxToMatchType(matchType->currentIndex());
-                         int at = boxToAlgoType(algoType->currentIndex());
-                         bool ok;
-                         int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
-                         p = eng.ExtractPalette(nbColors ,at);
-                         eng.AdaptToPaletteClosest(p, mt);
-                         this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
-
     algoType = new QComboBox(editedLabel);
     algoType->addItem("Median cut");
     algoType->addItem("Octree");
@@ -205,6 +193,17 @@ bool interface::loadFile(const QString &filename)
     return true;
 }
 
+void interface::resetPalette()
+{
+
+    int mt = boxToMatchType(matchType->currentIndex());
+    int at = boxToAlgoType(algoType->currentIndex());
+    bool ok;
+    int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
+    p = eng.ExtractPalette(nbColors, at);
+    eng.AdaptToPaletteClosest(p, mt);
+    this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited));
+}
 void interface::open()
 {
     QFileDialog dialog(this, tr("Open File"));
@@ -226,16 +225,17 @@ void interface::saveAs()
     }
 }
 
-void interface::savePalette(){
+void interface::savePalette()
+{
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Palette As...", ""));
     if (fileName.isEmpty())
         return;
-    else {
+    else
+    {
         p = eng.getPalette();
         p.savePalette(fileName.toStdString());
     }
 }
-
 
 void interface::createActions()
 {
@@ -249,7 +249,11 @@ void interface::createActions()
     QAction *exitAct = fileMenu->addAction(tr("&Exit"), this, &QWidget::close);
     exitAct->setShortcut(tr("Ctrl+Q"));
 
-    QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
+    QMenu *colorMenu = menuBar()->addMenu(tr("&Color"));
+
+    addColorAct = colorMenu->addAction(tr("Add Color to palette..."), this, &interface::addColor);
+    QAction *resetPaletteAct = colorMenu->addAction(tr("Reset Palette..."), this, &interface::resetPalette);
+
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
 
     fitToWindowAct = viewMenu->addAction(tr("&Fit to Window"), this, &interface::fitToWindow);
@@ -275,4 +279,12 @@ void interface::fitToWindow()
     if (!fitToWindow)
         normalSize();
     updateActions();
+}
+
+void interface::addColor(){
+    //OPEN COLOR PICKER
+    QColor color = QColorDialog::getColor();
+    //BUILD QRGB FROM ITS DATA
+    p.addColor(color.rgb());
+    //ADD COLOR TO P
 }

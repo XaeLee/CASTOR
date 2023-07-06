@@ -50,7 +50,7 @@ private:
     void ReduceColorsOctree(int n, int matchType);
 
     // ----------------------------------------- Color Matching -------------------------------------
-    // Simple matching from edited image to palette
+    // Simple matching from edited image to palette, using rgb distance
     void AdaptToPaletteClosestNeutral(palette p);
 
     //Dithering algos
