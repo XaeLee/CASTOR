@@ -3,6 +3,8 @@
 
 #include "palette.h"
 
+using namespace mypalette;
+
 class ocnode
 {
 public:

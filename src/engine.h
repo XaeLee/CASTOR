@@ -7,6 +7,8 @@
 #include "octree.h"
 #include "palette.h"
 
+using namespace mypalette;
+
 using namespace std;
 
 enum algoType {

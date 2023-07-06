@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 using namespace std;
+using namespace mypalette;
 
 palette palette::OpenPalette(string filename){
     fstream file(filename, ios::in);

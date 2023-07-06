@@ -2,6 +2,7 @@
 
 #include "palette.h"
 #include <QtGui/qimage.h>
+using namespace mypalette;
 
 QRgb matchBasic(QRgb base, palette p);
 int color_distance(QRgb p1, QRgb p2);

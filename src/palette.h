@@ -5,6 +5,10 @@
 #include <QtGui/qcolor.h>
 
 using namespace std;
+namespace mypalette
+{
+    
+
 class palette
 {
 private:
@@ -19,3 +23,4 @@ public:
     palette();
     ~palette();
 };
+} // namespace mypalette

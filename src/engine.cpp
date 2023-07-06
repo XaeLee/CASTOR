@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace mypalette;
 
 engine::engine(string filename){
     this->original = QImage(filename.c_str());

@@ -41,6 +41,7 @@ private :
     bool saveFile(const QString &filename);
 
     engine eng;
+    mypalette::palette p;
     QImage img;
 
     QLabel *editedLabel;
@@ -54,6 +55,8 @@ private :
      * Opens a dialog for the user to choose a source palette
     */
     QPushButton *adaptToPalette;
+    QPushButton *changePalette;
+    QPushButton *resetPalette;
 
     QComboBox *algoType;
     QComboBox *matchType;
@@ -65,5 +68,6 @@ private :
 public:
     interface(QWidget *parent = nullptr);
     bool loadFile(const QString &filename);
+    bool loadPalette(const QString &filename);
 };
 
