@@ -6,6 +6,16 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QScreen>
+#include <QtWidgets/QFileDialog>
+#include <QtGui/QImageReader>
+#include <QtGui/QImageWriter>
+#include <QtCore/QStandardPaths>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QMenuBar>
+#include <QtGui/QPixmap>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QInputDialog>
 
 #include "engine.h"
 
@@ -20,30 +30,33 @@ private slots:
     //saves edit under a given filename
     //TODO
     void saveAs();
+    void fitToWindow();
+    void normalSize();
+    
 private :
     void createMenus();
     void createActions();
     void updateActions();
     
-    bool loadFile(const QString filename);
     bool saveFile(const QString &filename);
 
-    engine *eng;
+    engine eng;
+    QImage img;
 
-    QWidget *mainWindow;
-    QLabel *sourceLabel;
     QLabel *editedLabel;
-    QScrollArea *scrollAreaSource;
     QScrollArea *scrollAreaEdited;
 
+    QPushButton *apply;
 
-    QVBoxLayout *images;
-
-    interface *ui;
+    QComboBox *algoType;
+    QComboBox *matchType;
 
     QAction *saveAsAct;
+    QAction *fitToWindowAct;
 
+    double scaleFactor = 1;
 public:
     interface(QWidget *parent = nullptr);
+    bool loadFile(const QString &filename);
 };
 

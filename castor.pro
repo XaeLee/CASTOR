@@ -22,3 +22,4 @@ FORMS += \
     src/interface.ui
 
 CONFIG += debug
+CONFIG += sanitizer sanitize_address

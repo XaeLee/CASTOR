@@ -8,6 +8,10 @@ engine::engine(string filename){
     this->color_count = -1;
 }
 
+engine::engine(){
+    this->color_count = 0;
+}
+
 engine::engine(QImage img){
     this->original = img;
     this->color_count = -1;
@@ -15,6 +19,11 @@ engine::engine(QImage img){
 
 engine::~engine(){
 
+}
+
+void engine::openImage(QImage img){
+    this->original = img;
+    this->color_count = -1;
 }
 
 void engine::saveEdit(string filename){

@@ -1,40 +1,79 @@
 #include "interface.h"
 
-#include <QtWidgets/QFileDialog>
-#include <QtGui/QImageReader>
-#include <QtGui/QImageWriter>
-#include <QtCore/QStandardPaths>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QMenuBar>
+#include <iostream>
+
+int boxToAlgoType(int i){
+    switch (i)
+    {
+    case 0 :
+        std::cout << "median cut" << endl;
+        return MEDIAN_CUT;
+    default:
+        break;
+        return -1;
+    } 
+}
+
+int boxToMatchType(int i){
+    switch (i)
+    {
+    case 0 :
+        std::cout << "basic" << endl;
+        return BASIC;
+    case 1 :
+        std::cout << "floyd" << endl;
+        return DI_FLOYD_STEINBERG;
+    case 2 :
+        std::cout << "noise" << endl;
+        return DI_NOISE;
+    default:
+        break;
+        return -1;
+    } 
+}
 
 interface::interface(QWidget *parent) : QMainWindow(parent)
 {
-    mainWindow = new QWidget();
-    scrollAreaSource = new QScrollArea();
     scrollAreaEdited = new QScrollArea();
-    sourceLabel = new QLabel();
     editedLabel = new QLabel();
-    images = new QVBoxLayout(mainWindow);
+    
+    apply = new QPushButton("&Apply", editedLabel);
+    apply->move(15, 600);
+    apply->show();
+    QObject::connect(apply, &QPushButton::clicked, [this](){
+        int at = boxToAlgoType(algoType->currentIndex());
+        int mt = boxToMatchType(matchType->currentIndex());
+    });
 
-    sourceLabel->setBackgroundRole(QPalette::Base);
-    sourceLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    sourceLabel->setScaledContents(true);
+    algoType = new QComboBox(editedLabel);
+    algoType->addItem("Median cut");
+    algoType->addItem("Octree");
+    algoType->move(15, 500);
+    
+    matchType = new QComboBox(editedLabel);
+    matchType->addItem("Closest - RGB");
+    matchType->addItem("Floyd Steinberg Dithering");
+    matchType->addItem("Noise Dithering");
+    matchType->addItem("Jarvis J.N. Dithering");
+    matchType->addItem("Atkinson Dithering");
+    matchType->addItem("Sierra Dithering");
+    matchType->addItem("Sierra Two Rows Dithering");
+    matchType->addItem("Sierra Lite Dithering");
+    matchType->addItem("Bayer Ordered Dithering");
+    matchType->move(15, 550);
 
     editedLabel->setBackgroundRole(QPalette::Base);
     editedLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     editedLabel->setScaledContents(true);
 
-    scrollAreaSource->setBackgroundRole(QPalette::Dark);
-    scrollAreaSource->setWidget(sourceLabel);
-    
     scrollAreaEdited->setBackgroundRole(QPalette::Dark);
-    scrollAreaEdited->setWidget(sourceLabel);
+    scrollAreaEdited->setWidget(editedLabel);
+    scrollAreaEdited->setVisible(false);
+    setCentralWidget(scrollAreaEdited);
 
-    images->addWidget(scrollAreaSource);
-    images->addWidget(scrollAreaEdited);
 
     createActions();
-    resize(QGuiApplication::primaryScreen()->availableSize() * 3 / 5);
+    resize(QGuiApplication::primaryScreen()->availableSize());
 }
 
 static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
@@ -60,22 +99,28 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         dialog.setDefaultSuffix("jpg");
 }
 
-bool interface::loadFile(const QString filename){
+bool interface::loadFile(const QString &filename){
     QImageReader reader(filename);
     reader.setAutoTransform(true);
-    QImage newImage = reader.read();
+    const QImage newImage = reader.read();
     if (newImage.isNull()) {
         QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
                                  tr("Cannot load %1: %2")
-                                 .arg(QDir::toNativeSeparators(filename), reader.errorString()));
+                                 .arg(QDir::toNativeSeparators(filename), "Could not open this file."));
         return false;
     }
 
-    engine test = engine(newImage);
-    eng = &test;
-    sourceLabel->setPixmap(QPixmap::fromImage(eng->original));
-    sourceLabel->show();
+    scaleFactor = 1;
+
+    img = newImage;
+    eng.openImage(img);
+    scrollAreaEdited->setVisible(true);
+    fitToWindowAct->setEnabled(true);
+    editedLabel->setPixmap(QPixmap::fromImage(newImage));
     updateActions();
+    if (!fitToWindowAct->isChecked())
+        editedLabel->adjustSize();
+    return true;
 }
 
 void interface::open()
@@ -83,7 +128,7 @@ void interface::open()
     QFileDialog dialog(this, tr("Open File"));
     initializeImageFileDialog(dialog, QFileDialog::AcceptOpen);
 
-    while (dialog.exec() != QDialog::Accepted && !loadFile(dialog.selectedFiles().constFirst())) {}
+    while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().constFirst())) {}
 }
 
 void interface::saveAs(){
@@ -91,7 +136,7 @@ void interface::saveAs(){
     if (fileName.isEmpty())
         return;
     else {
-        eng->saveEdit(fileName.toStdString());
+        eng.saveEdit(fileName.toStdString());
     }
 }
 
@@ -109,8 +154,25 @@ void interface::createActions(){
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
 
+    fitToWindowAct = viewMenu->addAction(tr("&Fit to Window"), this, &interface::fitToWindow);
+    fitToWindowAct->setEnabled(true);
+    fitToWindowAct->setCheckable(true);
+    fitToWindowAct->setShortcut(tr("Ctrl+F"));
 
 }
 
 void interface::updateActions(){
+}
+
+void interface::normalSize(){
+    editedLabel->adjustSize();
+    scaleFactor = 10.0;
+}
+
+void interface::fitToWindow(){
+    bool fitToWindow = fitToWindowAct->isChecked();
+    scrollAreaEdited->setWidgetResizable(fitToWindow);
+    if (!fitToWindow)
+        normalSize();
+    updateActions();
 }

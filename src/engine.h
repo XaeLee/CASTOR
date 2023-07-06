@@ -64,6 +64,12 @@ public:
      * Saves edited image under name "filename" in current directory
     */
     void saveEdit(string filename);
+
+    /**
+     * Load new image as original, in case the engine was initiated without a file (for interface)
+    */
+    void openImage(QImage img);
+    engine();
     engine(string filename);
     engine(QImage img);
     ~engine();
