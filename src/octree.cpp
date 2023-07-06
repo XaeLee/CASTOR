@@ -25,6 +25,7 @@ octree::~octree(){
  * Get node that is passed by the least, meaning the color the least used in the image
 */
 std::pair<ocnode *, int> octree::getMinRefCount(ocnode *n){
+    MinReferenceCount = INT_MAX;
     int minChild = -1;
     for (int i = 0; i < 8; i++){
         if (n->children[i] && n->children[i]->passes < MinReferenceCount) {
@@ -100,7 +101,7 @@ void octree::setColor(ocnode *n, QRgb color){
 */
 int getIndex(int r, int g, int b, int level){
     int index=0;
-    int bit = 1<<level;
+    int bit = 1<< level;
     if((r&bit) == bit)
         index |= (1<<2);
     if((g&bit) == bit)
@@ -143,7 +144,6 @@ palette octree::reduceColors(QImage img){
     cout << "done building the tree" << endl;
     // we reduce the colors, starting with the least used ones
     while(currcolorsCount > wantedColors){
-        this->MinReferenceCount = INT_MAX;
         auto pair_min = getMinRefCount(root);
         mergeLeast(pair_min.first, pair_min.second);
     }
