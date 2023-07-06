@@ -20,6 +20,7 @@ public:
     void display();
     palette OpenPalette(string filename);
     int getColorCount();
+    void savePalette(string filename);
     palette();
     ~palette();
 };

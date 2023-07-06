@@ -20,8 +20,5 @@ TARGET = castor
 
 TEMPLATE = app
 
-FORMS += \
-    src/interface.ui
-
 CONFIG += debug
 CONFIG += sanitizer sanitize_address

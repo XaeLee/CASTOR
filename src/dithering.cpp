@@ -58,7 +58,7 @@ void engine::AdaptToPaletteClosestNoise(palette p){
     for (int x = 0; x < nbCols; x++){
         for (int y = 0; y < nbRows; y++){
             float random = rand() % 200 / 10.0 - 10;
-            QRgb newpix = matchBasic(original.pixel(x, y), p);
+            QRgb newpix = matchBasic(add_to_rgb(original.pixel(x, y), random), p);
             this->edited.setPixel(x, y, newpix);
         }
     }

@@ -226,6 +226,17 @@ void interface::saveAs()
     }
 }
 
+void interface::savePalette(){
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Palette As...", ""));
+    if (fileName.isEmpty())
+        return;
+    else {
+        p = eng.getPalette();
+        p.savePalette(fileName.toStdString());
+    }
+}
+
+
 void interface::createActions()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -234,7 +245,7 @@ void interface::createActions()
     openAct->setShortcut(QKeySequence::Open);
 
     saveAsAct = fileMenu->addAction(tr("Save As..."), this, &interface::saveAs);
-
+    savePaletteAct = fileMenu->addAction(tr("Save Palette As..."), this, &interface::savePalette);
     QAction *exitAct = fileMenu->addAction(tr("&Exit"), this, &QWidget::close);
     exitAct->setShortcut(tr("Ctrl+Q"));
 
