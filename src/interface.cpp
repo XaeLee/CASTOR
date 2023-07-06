@@ -91,20 +91,6 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
                          eng.AdaptToPaletteClosest(p, mt);
                          this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
 
-    changePalette = new QPushButton("&Change Palette", editedLabel);
-    changePalette->move(280, 600);
-    changePalette->show();
-    QObject::connect(changePalette, &QPushButton::clicked, [this]()
-                     {
-                         int mt = boxToMatchType(matchType->currentIndex());
-                         QFileDialog dialog(this, tr("Choose CSV Palette"));
-                         initializePaletteFileDialog(dialog, QFileDialog::AcceptOpen);
-                         while (dialog.exec() == QDialog::Accepted && !loadPalette(dialog.selectedFiles().constFirst()))
-                         {
-                         }
-
-                         eng.AdaptToPaletteClosest(p, mt);
-                         this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
 
     algoType = new QComboBox(editedLabel);
     algoType->addItem("Median cut");
@@ -162,11 +148,13 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
     if (acceptMode == QFileDialog::AcceptSave)
         dialog.setDefaultSuffix("jpg");
 }
+
 bool interface::loadPalette(const QString &filename)
 {
     p.OpenPalette(filename.toStdString());
     return true;
 }
+
 bool interface::loadFile(const QString &filename)
 {
     QImageReader reader(filename);
@@ -237,6 +225,19 @@ void interface::savePalette()
     }
 }
 
+void interface::reloadPalette()
+{
+    int mt = boxToMatchType(matchType->currentIndex());
+    QFileDialog dialog(this, tr("Choose CSV Palette"));
+    initializePaletteFileDialog(dialog, QFileDialog::AcceptOpen);
+    while (dialog.exec() == QDialog::Accepted && !loadPalette(dialog.selectedFiles().constFirst()))
+    {
+    }
+
+    eng.AdaptToPaletteClosest(p, mt);
+    this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited));
+}
+
 void interface::createActions()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -254,6 +255,7 @@ void interface::createActions()
     addColorAct = colorMenu->addAction(tr("Add Color to palette..."), this, &interface::addColor);
     QAction *resetPaletteAct = colorMenu->addAction(tr("Reset Palette..."), this, &interface::resetPalette);
 
+    loadReloadPalAct = colorMenu->addAction(tr("Load/Change Palette"), this, &interface::reloadPalette);
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
 
     fitToWindowAct = viewMenu->addAction(tr("&Fit to Window"), this, &interface::fitToWindow);
@@ -281,10 +283,11 @@ void interface::fitToWindow()
     updateActions();
 }
 
-void interface::addColor(){
-    //OPEN COLOR PICKER
+void interface::addColor()
+{
+    // OPEN COLOR PICKER
     QColor color = QColorDialog::getColor();
-    //BUILD QRGB FROM ITS DATA
+    // BUILD QRGB FROM ITS DATA
     p.addColor(color.rgb());
-    //ADD COLOR TO P
+    // ADD COLOR TO P
 }

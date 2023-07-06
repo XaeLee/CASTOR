@@ -21,4 +21,3 @@ TARGET = castor
 TEMPLATE = app
 
 CONFIG += debug
-CONFIG += sanitizer sanitize_address

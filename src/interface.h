@@ -35,6 +35,7 @@ private slots:
     void normalSize();
     void addColor();
     void resetPalette();
+    void reloadPalette();
 
 private :
     void createMenus();
@@ -58,7 +59,6 @@ private :
      * Opens a dialog for the user to choose a source palette
     */
     QPushButton *adaptToPalette;
-    QPushButton *changePalette;
 
     QComboBox *algoType;
     QComboBox *matchType;
@@ -67,6 +67,7 @@ private :
     QAction *fitToWindowAct;
     QAction *savePaletteAct;
     QAction *addColorAct;
+    QAction *loadReloadPalAct;
 
     double scaleFactor = 1;
 public:
