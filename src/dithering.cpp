@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 
 QRgb add_rgb(QRgb pix, QRgb error, float fact){
     int red = qRed(pix) + qRed(error) * fact;
@@ -276,6 +277,71 @@ void engine::AdaptToPaletteClosestSierraLite(palette p){
             }
             if (x + 1 < nbCols)
                 cpy.setPixel(x + 1, y, add_rgb(cpy.pixel(x + 1,y), error, two));
+        }
+    }
+}
+
+void engine::AdaptToPaletteClosestBayer4x4(palette p) {
+    size_t nbCols = original.width();
+    size_t nbRows = original.height();
+
+
+    cpy = original.copy();
+
+    constexpr unsigned char bayer4x4[4][4] = {
+            {0, 8, 2, 10},
+            {12, 4, 14, 6},
+            {3, 11, 1, 9},
+            {15, 7, 13, 5},
+    };
+    constexpr unsigned char factor = 16; // factor to scale from [0, 16[ to [0, 256[
+
+    float r = 1 / log2(p.getColorCount());
+
+
+    for (size_t col = 0; col < nbCols; col++)
+    {
+        for (size_t row = 0; row < nbRows; row++)
+        {
+            QRgb oldPix = cpy.pixel(col, row);
+
+            QRgb newPix = matchBasic(add_to_rgb(oldPix,  r * (bayer4x4[col & 3][row & 3] * factor - 127)), p);
+            this->edited.setPixel(col, row, newPix);
+        }
+    }
+}
+
+void engine::AdaptToPaletteClosestBayer8x8(palette p) {
+    size_t nbCols = original.width();
+    size_t nbRows = original.height();
+
+
+    cpy = original.copy();
+
+    constexpr unsigned char bayer8x8[8][8] = {
+            {0,  32, 8,  40, 2,  34, 10, 42},
+            {48, 16, 56, 24, 50, 18, 58, 26},
+            {12, 44, 4,  36, 14, 46, 6,  38},
+            {60, 28, 52, 20, 62, 30, 54, 22},
+            {3,  35, 11, 43, 1,  33, 9,  41},
+            {51, 19, 59, 27, 49, 17, 57, 25},
+            {15, 47, 7,  39, 13, 45, 5,  37},
+            {63, 31, 55, 23, 61, 29, 53, 21},
+    };
+
+    constexpr unsigned char factor = 4; // factor to scale from [0, 64[ to [0, 256[
+
+    float r = 1 / log2(p.getColorCount());
+
+
+    for (size_t col = 0; col < nbCols; col++)
+    {
+        for (size_t row = 0; row < nbRows; row++)
+        {
+            QRgb oldPix = cpy.pixel(col, row);
+
+            QRgb newPix = matchBasic(add_to_rgb(oldPix,  r * (bayer8x8[col & 7][row & 7] * factor - 127)), p);
+            this->edited.setPixel(col, row, newPix);
         }
     }
 }

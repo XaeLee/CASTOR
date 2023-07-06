@@ -82,6 +82,12 @@ void engine::AdaptToPaletteClosest(palette p, int matchType){
     case DI_SIERRA_LITE:
         this->AdaptToPaletteClosestSierraLite(p);
         break;
+    case matchType::DI_BAYER_4X4:
+        this->AdaptToPaletteClosestBayer4x4(p);
+        break;
+    case matchType::DI_BAYER_8x8:
+        this->AdaptToPaletteClosestBayer8x8(p);
+        break;
     default:
         cout << "please provide a valid algorithm type" << endl;
         break;

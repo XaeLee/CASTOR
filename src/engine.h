@@ -2,14 +2,30 @@
 
 #include <string>
 
-#include <qt5/QtGui/qimage.h>
+#include <qt/QtGui/qimage.h>
 
 #include "palette.h"
 #include "octree.h"
 
 using namespace std;
-enum algoType {MEDIAN_CUT, OCTREE};
-enum matchType {BASIC, DI_FLOYD_STEINBERG, DI_NOISE, DI_JARVISJN, DI_ATKINSON, DI_SIERRA, DI_SIERRA_TWO_ROW, DI_SIERRA_LITE};
+
+enum algoType {
+    MEDIAN_CUT,
+    OCTREE,
+};
+
+enum matchType {
+    BASIC,
+    DI_FLOYD_STEINBERG,
+    DI_NOISE,
+    DI_JARVISJN,
+    DI_ATKINSON,
+    DI_SIERRA,
+    DI_SIERRA_TWO_ROW,
+    DI_SIERRA_LITE,
+    DI_BAYER_4X4,
+    DI_BAYER_8x8,
+};
 
 class engine
 {
@@ -43,6 +59,8 @@ private:
     void AdaptToPaletteClosestSierra(palette p);
     void AdaptToPaletteClosestSierraTwoRows(palette p);
     void AdaptToPaletteClosestSierraLite(palette p);
+    void AdaptToPaletteClosestBayer4x4(palette p);
+    void AdaptToPaletteClosestBayer8x8(palette p);
 
 
 public:
