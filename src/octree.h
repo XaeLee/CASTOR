@@ -26,7 +26,7 @@ public:
 class octree
 {
 private:
-    void mergeLeast(ocnode *n, int min);
+    void mergeLeast(ocnode *parent, int iChild);
     void FillPalette(ocnode *n);
     void addColor(ocnode *n, QRgb color, int level);
     void setColor(ocnode *n, QRgb color);
@@ -38,8 +38,7 @@ private:
     int maxDepth = 4;
 
     unsigned int MinReferenceCount;
-    void getMinRefCount(ocnode *n);
-
+    std::pair<ocnode *, int> getMinRefCount(ocnode *n);
 
     palette p;
 

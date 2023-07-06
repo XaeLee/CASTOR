@@ -24,15 +24,20 @@ octree::~octree(){
 /**
  * Get node that is passed by the least, meaning the color the least used in the image
 */
-void octree::getMinRefCount(ocnode *n){
-    if (n->passes < MinReferenceCount)
-        MinReferenceCount = n->passes;
-    if (n->childrenCount == 0)
-        return;
+std::pair<ocnode *, int> octree::getMinRefCount(ocnode *n){
+    int minChild = -1;
     for (int i = 0; i < 8; i++){
-        if (n->children[i])
-            getMinRefCount(n->children[i]);
+        if (n->children[i] && n->children[i]->passes < MinReferenceCount) {
+            MinReferenceCount = n->children[i]->passes;
+            minChild = i;
+        }
     }
+    assert(minChild != -1);
+    ocnode *child = n->children[minChild];
+    if (child->childrenCount == 0){
+        return std::make_pair(n, minChild);
+    }
+    return getMinRefCount(child);
 }
 
 /**
@@ -40,36 +45,20 @@ void octree::getMinRefCount(ocnode *n){
  * Merging goes on the least used node
  * We are then looking for the node with mincount passes
 */
-void octree::mergeLeast(ocnode *n, int mincount){
-    if (n->passes > mincount || currcolorsCount == wantedColors)
-        return;
-    
-    for (int i = 0; i < 8; i++){
-        // we go over the 9 children
-        if(n->children[i] && (n->children[i]->childrenCount > 0))
-            //if the given node has children, its not a leaf, and only leaves represent colors. We go deeper.
-            mergeLeast(n->children[i], mincount);
-        else {
-            //else, we merge - or stop if we reached the nb of wanted colors.
-            if (currcolorsCount == wantedColors)
-                break;
-            if (n->children[i]){
-                n->pixel_count += n->children[i]->pixel_count;
-                n->r_sum += n->children[i]->r_sum;
-                n->g_sum += n->children[i]->g_sum;
-                n->b_sum += n->children[i]->b_sum;
+void octree::mergeLeast(ocnode *parent, int iChild) {
+    ocnode *child = parent->children[iChild];
+    parent->pixel_count += child->pixel_count;
+    parent->r_sum += child->r_sum;
+    parent->g_sum += child->g_sum;
+    parent->b_sum += child->b_sum;
 
-                delete n->children[i];
+    delete parent->children[iChild];
 
-                n->children[i] = NULL;
-                n->childrenCount--;
-                currcolorsCount--; //we removed a color from the tree
+    parent->children[iChild] = nullptr;
+    parent->childrenCount--;
+    currcolorsCount--; //we removed a color from the tree
 
-
-            }
-        }
-    }
-    if (n->childrenCount == 0)
+    if (parent->childrenCount == 0)
         currcolorsCount++; // we removed all 8 children color, but parent became a leaf and thus a color
 }
 
@@ -153,12 +142,10 @@ palette octree::reduceColors(QImage img){
     }
     cout << "done building the tree" << endl;
     // we reduce the colors, starting with the least used ones
-    this->MinReferenceCount = INT_MAX;
-    getMinRefCount(root);
-    int leastUsed = MinReferenceCount;
-    while((currcolorsCount > wantedColors)){
-        mergeLeast(root, leastUsed);
-        leastUsed += MinReferenceCount;
+    while(currcolorsCount > wantedColors){
+        this->MinReferenceCount = INT_MAX;
+        auto pair_min = getMinRefCount(root);
+        mergeLeast(pair_min.first, pair_min.second);
     }
 
     cout << "done reducing to "<< to_string(wantedColors) << " colors" << endl;
