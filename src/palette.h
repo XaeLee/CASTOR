@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <qt/QtGui/qcolor.h>
+#include <QtGui/qcolor.h>
 
 using namespace std;
 class palette

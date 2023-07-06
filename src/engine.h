@@ -2,10 +2,10 @@
 
 #include <string>
 
-#include <qt/QtGui/qimage.h>
+#include <QtGui/qimage.h>
 
-#include "palette.h"
 #include "octree.h"
+#include "palette.h"
 
 using namespace std;
 

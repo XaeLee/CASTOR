@@ -6,8 +6,9 @@ int boxToAlgoType(int i){
     switch (i)
     {
     case 0 :
-        std::cout << "median cut" << endl;
         return MEDIAN_CUT;
+    case 1:
+        return OCTREE;
     default:
         break;
         return -1;
@@ -18,14 +19,25 @@ int boxToMatchType(int i){
     switch (i)
     {
     case 0 :
-        std::cout << "basic" << endl;
         return BASIC;
     case 1 :
-        std::cout << "floyd" << endl;
         return DI_FLOYD_STEINBERG;
     case 2 :
-        std::cout << "noise" << endl;
         return DI_NOISE;
+    case 3 :
+        return DI_JARVISJN;
+    case 4 :
+        return DI_ATKINSON;
+    case 5 :
+        return DI_SIERRA;
+    case 6 :
+        return DI_SIERRA_TWO_ROW;
+    case 7 :
+        return DI_SIERRA_LITE;
+    case 8 :
+        return DI_BAYER_4X4;
+    case 9 :
+        return DI_BAYER_8x8;
     default:
         break;
         return -1;
@@ -37,12 +49,16 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     scrollAreaEdited = new QScrollArea();
     editedLabel = new QLabel();
     
-    apply = new QPushButton("&Apply", editedLabel);
-    apply->move(15, 600);
-    apply->show();
-    QObject::connect(apply, &QPushButton::clicked, [this](){
+    reduceColors = new QPushButton("&Reduce Colors", editedLabel);
+    reduceColors->move(15, 600);
+    reduceColors->show();
+    QObject::connect(reduceColors, &QPushButton::clicked, [this](){
         int at = boxToAlgoType(algoType->currentIndex());
         int mt = boxToMatchType(matchType->currentIndex());
+        bool ok;
+        int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
+        eng.ReduceColors(nbColors, at, mt);
+        this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited));
     });
 
     algoType = new QComboBox(editedLabel);
@@ -59,7 +75,8 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     matchType->addItem("Sierra Dithering");
     matchType->addItem("Sierra Two Rows Dithering");
     matchType->addItem("Sierra Lite Dithering");
-    matchType->addItem("Bayer Ordered Dithering");
+    matchType->addItem("Bayer 4x4 Ordered Dithering");
+    matchType->addItem("Bayer 8x8 Ordered Dithering");
     matchType->move(15, 550);
 
     editedLabel->setBackgroundRole(QPalette::Base);

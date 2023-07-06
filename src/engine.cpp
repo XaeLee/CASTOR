@@ -26,6 +26,7 @@ engine::~engine(){
 void engine::openImage(QImage img){
     this->original = img;
     this->color_count = -1;
+    this->edited = QImage(this->original.width(), this->original.height(), this->original.format());
 }
 
 void engine::saveEdit(string filename){

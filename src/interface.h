@@ -46,7 +46,14 @@ private :
     QLabel *editedLabel;
     QScrollArea *scrollAreaEdited;
 
-    QPushButton *apply;
+    /**
+     * Launches reduceColors w params from the ComboBox
+    */
+    QPushButton *reduceColors;
+    /**
+     * Opens a dialog for the user to choose a source palette
+    */
+    QPushButton *adaptToPalette;
 
     QComboBox *algoType;
     QComboBox *matchType;
