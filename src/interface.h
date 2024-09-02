@@ -16,6 +16,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QInputDialog>
+#include <QtWidgets/QDockWidget>
 
 #include "engine.h"
 
@@ -52,7 +53,9 @@ private :
 
     QLabel *previewImageLabel;
     //edited/preview image
+
     QScrollArea *scrollAreaEdited;
+    QDockWidget *paletteViewer;
 
     /**
      * Launches reduceColors w params from the ComboBox

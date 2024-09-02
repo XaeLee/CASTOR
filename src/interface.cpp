@@ -60,6 +60,12 @@ static void initializePaletteFileDialog(QFileDialog &dialog, QFileDialog::Accept
 interface::interface(QWidget *parent) : QMainWindow(parent)
 {
     scrollAreaEdited = new QScrollArea();
+    paletteViewer = new QDockWidget(tr("Opened Palette"), parent);
+    QLabel *displayPal = new QLabel("test test");
+    paletteViewer->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    paletteViewer->setWidget(displayPal);
+    addDockWidget(Qt::RightDockWidgetArea, paletteViewer);
+    
     previewImageLabel = new QLabel();
 
     adaptToPalette = new QPushButton("&Adapt To Palette", previewImageLabel);
@@ -100,8 +106,8 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
 
     scrollAreaEdited->setBackgroundRole(QPalette::Dark);
     scrollAreaEdited->setWidget(previewImageLabel);
-    scrollAreaEdited->setVisible(false);
     setCentralWidget(scrollAreaEdited);
+
 
     createActions();
     resize(QGuiApplication::primaryScreen()->availableSize());
@@ -174,7 +180,6 @@ bool interface::loadFile(const QString &filename)
 
     img = newImage;
     eng.openImage(img);
-    scrollAreaEdited->setVisible(true);
     fitToWindowAct->setEnabled(true);
     previewImageLabel->setPixmap(QPixmap::fromImage(newImage));
     updateActions();
