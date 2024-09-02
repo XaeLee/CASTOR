@@ -8,10 +8,13 @@
 QRgb add_rgb(QRgb pix, QRgb error, float fact){
     int red = qRed(pix) + qRed(error) * fact;
     red = red > 255 ? 255 : red;
+    red = red < 0 ? 0 : red;
     int green = qGreen(pix) + qGreen(error) * fact;
     green = green > 255 ? 255 : green;
+    green = green < 0 ? 0 : green;
     int blue = qBlue(pix) + qBlue(error) * fact;
     blue = blue > 255 ? 255 : blue;
+    blue = blue < 0 ? 0 : blue;
     return QColor(red, green, blue).rgb();
 }
 
@@ -31,10 +34,13 @@ QRgb add_rgb(QRgb pix, vector<float> error, float fact){
 QRgb add_to_rgb(QRgb pix, float f){
     int red = qRed(pix) + f;
     red = red > 255 ? 255 : red;
+    red = red < 0 ? 0 : red;
     int green = qGreen(pix) + f;
     green = green > 255 ? 255 : green;
+    green = green < 0 ? 0 : green;
     int blue = qBlue(pix) + f;
     blue = blue > 255 ? 255 : blue;
+    blue = blue < 0 ? 0 : blue;
     return QColor(red, green, blue).rgb();
 
 }

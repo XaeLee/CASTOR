@@ -31,3 +31,7 @@ And then launch the GUI with :
 
 The shortcut for image loading is Ctrl + O.
 Either check the "Fit to Window" box in the View menu or use shortcut Ctrl + F to enable image manipulation.
+
+# NOTES
+
+Originally a school project, CASTOR is now maintened as a personal tool mainly focused on color adjustment features - there are already many color extraction and/or color picker tools available for free online, and the 2 color reduction algorithms still available under the "Miscellaneous" menu were implemented for fun and to complete the school project only. They can be used, but are slow and suboptimized, and will likely not be updated.

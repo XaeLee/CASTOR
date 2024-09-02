@@ -34,9 +34,10 @@ private slots:
     void fitToWindow();
     void normalSize();
     void addColor();
-    void resetPalette();
     void reloadPalette();
     void resetImage();
+    void generatePaletteFromImageMedianCut();
+    void generatePaletteFromImageOctree();
 
 private :
     void createMenus();
@@ -49,7 +50,8 @@ private :
     mypalette::palette p;
     QImage img;
 
-    QLabel *editedLabel;
+    QLabel *previewImageLabel;
+    //edited/preview image
     QScrollArea *scrollAreaEdited;
 
     /**

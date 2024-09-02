@@ -56,25 +56,14 @@ static void initializePaletteFileDialog(QFileDialog &dialog, QFileDialog::Accept
         dialog.setDefaultSuffix("csv");
 }
 
+
 interface::interface(QWidget *parent) : QMainWindow(parent)
 {
     scrollAreaEdited = new QScrollArea();
-    editedLabel = new QLabel();
+    previewImageLabel = new QLabel();
 
-    reduceColors = new QPushButton("&Reduce Colors", editedLabel);
-    reduceColors->move(130, 15);
-    reduceColors->show();
-    QObject::connect(reduceColors, &QPushButton::clicked, [this]()
-                     {
-        int at = boxToAlgoType(algoType->currentIndex());
-        int mt = boxToMatchType(matchType->currentIndex());
-        bool ok;
-        int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
-        eng.ReduceColors(nbColors, at, mt);
-        this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
-
-    adaptToPalette = new QPushButton("&Adapt To Palette", editedLabel);
-    adaptToPalette->move(250, 65);
+    adaptToPalette = new QPushButton("&Adapt To Palette", previewImageLabel);
+    adaptToPalette->move(250, 15);
     adaptToPalette->show();
     QObject::connect(adaptToPalette, &QPushButton::clicked, [this]()
                      {
@@ -89,15 +78,10 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
                          }
 
                          eng.AdaptToPaletteClosest(p, mt);
-                         this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
+                         this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
 
 
-    algoType = new QComboBox(editedLabel);
-    algoType->addItem("Median cut");
-    algoType->addItem("Octree");
-    algoType->move(15, 15);
-
-    matchType = new QComboBox(editedLabel);
+    matchType = new QComboBox(previewImageLabel);
     matchType->addItem("Closest - RGB");
     matchType->addItem("Floyd Steinberg Dithering");
     matchType->addItem("Noise Dithering");
@@ -108,14 +92,14 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     matchType->addItem("Sierra Lite Dithering");
     matchType->addItem("Bayer 4x4 Ordered Dithering");
     matchType->addItem("Bayer 8x8 Ordered Dithering");
-    matchType->move(15, 65);
+    matchType->move(15, 15);
 
-    editedLabel->setBackgroundRole(QPalette::Base);
-    editedLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    editedLabel->setScaledContents(true);
+    previewImageLabel->setBackgroundRole(QPalette::Base);
+    previewImageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    previewImageLabel->setScaledContents(true);
 
     scrollAreaEdited->setBackgroundRole(QPalette::Dark);
-    scrollAreaEdited->setWidget(editedLabel);
+    scrollAreaEdited->setWidget(previewImageLabel);
     scrollAreaEdited->setVisible(false);
     setCentralWidget(scrollAreaEdited);
 
@@ -149,6 +133,24 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         dialog.setDefaultSuffix("jpg");
 }
 
+void interface::generatePaletteFromImageMedianCut(){
+    int at = MEDIAN_CUT;
+    bool ok;
+    int mt = boxToMatchType(matchType->currentIndex());
+    int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
+    eng.ReduceColors(nbColors, at, mt);
+    this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
+}
+
+void interface::generatePaletteFromImageOctree(){
+    int at = OCTREE;
+    bool ok;
+    int mt = boxToMatchType(matchType->currentIndex());
+    int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
+    eng.ReduceColors(nbColors, at, mt);
+    this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
+}
+
 bool interface::loadPalette(const QString &filename)
 {
     p.OpenPalette(filename.toStdString());
@@ -174,23 +176,11 @@ bool interface::loadFile(const QString &filename)
     eng.openImage(img);
     scrollAreaEdited->setVisible(true);
     fitToWindowAct->setEnabled(true);
-    editedLabel->setPixmap(QPixmap::fromImage(newImage));
+    previewImageLabel->setPixmap(QPixmap::fromImage(newImage));
     updateActions();
     if (!fitToWindowAct->isChecked())
-        editedLabel->adjustSize();
+        previewImageLabel->adjustSize();
     return true;
-}
-
-void interface::resetPalette()
-{
-
-    int mt = boxToMatchType(matchType->currentIndex());
-    int at = boxToAlgoType(algoType->currentIndex());
-    bool ok;
-    int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
-    p = eng.ExtractPalette(nbColors, at);
-    eng.AdaptToPaletteClosest(p, mt);
-    this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited));
 }
 
 void interface::open()
@@ -236,7 +226,7 @@ void interface::reloadPalette()
     }
 
     eng.AdaptToPaletteClosest(p, mt);
-    this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited));
+    this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
 }
 
 void interface::createActions()
@@ -244,10 +234,10 @@ void interface::createActions()
     // File Menu
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
-    QAction *openAct = fileMenu->addAction(tr("&Open..."), this, &interface::open);
+    QAction *openAct = fileMenu->addAction(tr("&Open Image..."), this, &interface::open);
     openAct->setShortcut(QKeySequence::Open);
 
-    saveAsAct = fileMenu->addAction(tr("Save As..."), this, &interface::saveAs);
+    saveAsAct = fileMenu->addAction(tr("Save Image As..."), this, &interface::saveAs);
     savePaletteAct = fileMenu->addAction(tr("Save Palette As..."), this, &interface::savePalette);
 
     QAction *exitAct = fileMenu->addAction(tr("&Exit"), this, &QWidget::close);
@@ -255,12 +245,10 @@ void interface::createActions()
 
 
     // Color Menu
-    QMenu *colorMenu = menuBar()->addMenu(tr("&Color"));
+    QMenu *PaletteMenu = menuBar()->addMenu(tr("&Palette"));
 
-    addColorAct = colorMenu->addAction(tr("Add Color to palette..."), this, &interface::addColor);
-    QAction *resetPaletteAct = colorMenu->addAction(tr("Reset Palette..."), this, &interface::resetPalette);
-
-    loadReloadPalAct = colorMenu->addAction(tr("Load/Change Palette"), this, &interface::reloadPalette);
+    loadReloadPalAct = PaletteMenu->addAction(tr("Load New Palette..."), this, &interface::reloadPalette);
+    addColorAct = PaletteMenu->addAction(tr("Add Color to palette..."), this, &interface::addColor);
 
     // View Menu
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
@@ -272,6 +260,13 @@ void interface::createActions()
     
     resetImageAct = viewMenu->addAction(tr("Reset image preview"), this, &interface::resetImage);
     resetImageAct->setShortcut(tr("Ctrl+R"));
+
+    QMenu *miscMenu = menuBar()->addMenu(tr("&Misc."));
+
+    QAction *reduceColorsMedianCutAct = miscMenu->addAction(tr("Generate Palette - Median Cut"), this, &interface::generatePaletteFromImageMedianCut);
+    QAction *reduceColorsOctreeAct = miscMenu->addAction(tr("Generate Palette - Octree"), this, &interface::generatePaletteFromImageOctree);
+
+
 }
 
 void interface::updateActions()
@@ -280,12 +275,12 @@ void interface::updateActions()
 
 void interface::resetImage()
 {
-    editedLabel->setPixmap(QPixmap::fromImage(img));
+    previewImageLabel->setPixmap(QPixmap::fromImage(img));
 }
 
 void interface::normalSize()
 {
-    editedLabel->adjustSize();
+    previewImageLabel->adjustSize();
     scaleFactor = 10.0;
 }
 
