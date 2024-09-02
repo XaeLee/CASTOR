@@ -36,6 +36,7 @@ private slots:
     void addColor();
     void resetPalette();
     void reloadPalette();
+    void resetImage();
 
 private :
     void createMenus();
@@ -68,6 +69,7 @@ private :
     QAction *savePaletteAct;
     QAction *addColorAct;
     QAction *loadReloadPalAct;
+    QAction *resetImageAct;
 
     double scaleFactor = 1;
 public:

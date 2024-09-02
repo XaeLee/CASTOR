@@ -62,7 +62,7 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     editedLabel = new QLabel();
 
     reduceColors = new QPushButton("&Reduce Colors", editedLabel);
-    reduceColors->move(15, 600);
+    reduceColors->move(130, 15);
     reduceColors->show();
     QObject::connect(reduceColors, &QPushButton::clicked, [this]()
                      {
@@ -74,7 +74,7 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
         this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
 
     adaptToPalette = new QPushButton("&Adapt To Palette", editedLabel);
-    adaptToPalette->move(140, 600);
+    adaptToPalette->move(250, 65);
     adaptToPalette->show();
     QObject::connect(adaptToPalette, &QPushButton::clicked, [this]()
                      {
@@ -95,7 +95,7 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     algoType = new QComboBox(editedLabel);
     algoType->addItem("Median cut");
     algoType->addItem("Octree");
-    algoType->move(15, 500);
+    algoType->move(15, 15);
 
     matchType = new QComboBox(editedLabel);
     matchType->addItem("Closest - RGB");
@@ -108,7 +108,7 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     matchType->addItem("Sierra Lite Dithering");
     matchType->addItem("Bayer 4x4 Ordered Dithering");
     matchType->addItem("Bayer 8x8 Ordered Dithering");
-    matchType->move(15, 550);
+    matchType->move(15, 65);
 
     editedLabel->setBackgroundRole(QPalette::Base);
     editedLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -192,6 +192,7 @@ void interface::resetPalette()
     eng.AdaptToPaletteClosest(p, mt);
     this->editedLabel->setPixmap(QPixmap::fromImage(eng.edited));
 }
+
 void interface::open()
 {
     QFileDialog dialog(this, tr("Open File"));
@@ -240,6 +241,7 @@ void interface::reloadPalette()
 
 void interface::createActions()
 {
+    // File Menu
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
     QAction *openAct = fileMenu->addAction(tr("&Open..."), this, &interface::open);
@@ -247,25 +249,38 @@ void interface::createActions()
 
     saveAsAct = fileMenu->addAction(tr("Save As..."), this, &interface::saveAs);
     savePaletteAct = fileMenu->addAction(tr("Save Palette As..."), this, &interface::savePalette);
+
     QAction *exitAct = fileMenu->addAction(tr("&Exit"), this, &QWidget::close);
     exitAct->setShortcut(tr("Ctrl+Q"));
 
+
+    // Color Menu
     QMenu *colorMenu = menuBar()->addMenu(tr("&Color"));
 
     addColorAct = colorMenu->addAction(tr("Add Color to palette..."), this, &interface::addColor);
     QAction *resetPaletteAct = colorMenu->addAction(tr("Reset Palette..."), this, &interface::resetPalette);
 
     loadReloadPalAct = colorMenu->addAction(tr("Load/Change Palette"), this, &interface::reloadPalette);
+
+    // View Menu
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
 
     fitToWindowAct = viewMenu->addAction(tr("&Fit to Window"), this, &interface::fitToWindow);
     fitToWindowAct->setEnabled(true);
     fitToWindowAct->setCheckable(true);
     fitToWindowAct->setShortcut(tr("Ctrl+F"));
+    
+    resetImageAct = viewMenu->addAction(tr("Reset image preview"), this, &interface::resetImage);
+    resetImageAct->setShortcut(tr("Ctrl+R"));
 }
 
 void interface::updateActions()
 {
+}
+
+void interface::resetImage()
+{
+    editedLabel->setPixmap(QPixmap::fromImage(img));
 }
 
 void interface::normalSize()
