@@ -63,7 +63,7 @@ private :
     QGridLayout *dockLayout;
     //container palette widget : is the main widget of the dock, we create a new dockLayout to assign
     // the container to refresh the palette display
-    QWidget *container;
+    QScrollArea *container;
 
     /**
      * Opens a dialog for the user to choose a source palette if none is loaded
