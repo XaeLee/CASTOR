@@ -1,6 +1,11 @@
 #include "engine.h"
 #include "colorMatching.h"
 
+/**
+ * Extracts a n colors palette from the engine's loaded image, using median cut algorithm.
+ * @param n The number of color to keep for the palette
+ * @return The built n colors palette
+ */
 palette engine::ExtractPaletteMEDIAN(int n){
     if (n < 2)
         throw std::invalid_argument("n must be > 1 for color reduction");
@@ -70,6 +75,15 @@ palette engine::ExtractPaletteMEDIAN(int n){
     return res;
 }
 
+/**
+ * Builds a n-colors palette from the engine's loaded image, using median cut algorithme,
+ * and matches all pixel colors from the original image to a new one from said palette.
+ * Saves the results in the engine's edited image.
+ * @param n The number of colors to reduce to
+ * @param matchType The chosen matching algorithm chosen to match the original image's
+ * pixels to the reduced palette
+ * @return Nothing
+ */
 void engine::ReduceColorsMEDIAN(int n, int matchtype){
     if (n < 2)
         throw std::invalid_argument("n must be > 1 for color reduction");

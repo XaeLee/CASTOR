@@ -2,12 +2,19 @@
 
 #include <cmath>
 
+/**
+ * Performs basic matching between a color and a palette (color vector).
+ * 
+ * @param base The color to be matched
+ * @param p The palette with matchable colors
+ * @return The color from p closest to base
+ */
 QRgb matchBasic(QRgb base, palette p)
 {
     int index = 0;
     int current_distance = INT_MAX;
     vector<QRgb> cols = p.getColors();
-    for (int i = 0; i < cols.size(); i++)
+    for (unsigned int i = 0; i < cols.size(); i++)
     {
         int dist = color_distance(base, cols.at(i));
         if (dist < current_distance)
@@ -19,6 +26,12 @@ QRgb matchBasic(QRgb base, palette p)
     return cols[index];
 }
 
+/**
+ * Simple distance function - the distance between two colors is the sum of distances between their RGB values.
+ * @param p1 The first color
+ * @param p2 The second color
+ * @return The distance between two colors as an int
+ */
 int color_distance(QRgb p1, QRgb p2)
 {
     int r1 = qRed(p1);
@@ -32,6 +45,12 @@ int color_distance(QRgb p1, QRgb p2)
     return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2);
 }
 
+/**
+ * Simple distance function - the distance between two colors is the sum of distances between their RGB values.
+ * @param p1 The first color
+ * @param p2 The second color
+ * @return The distance between two colors as a triplet/color
+ */
 QRgb RGB_color_distance(QRgb p1, QRgb p2)
 {
     int r1 = qRed(p1);
@@ -45,6 +64,12 @@ QRgb RGB_color_distance(QRgb p1, QRgb p2)
     return QColor(abs(r1 - r2), abs(g1 - g2), abs(b1 - b2)).rgb();
 }
 
+/**
+ * Error measure - not a distance !
+ * @param p1 The expected color
+ * @param p2 The compared color
+ * @return An error vector holding the error in the red, green and blue axes.
+ */
 vector<float> error_rgb(QRgb p1, QRgb p2)
 {
     float r1 = qRed(p1);

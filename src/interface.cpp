@@ -3,6 +3,11 @@
 #include <iostream>
 #include <QtWidgets/QColorDialog>
 
+/**
+ * Int to color reduction algorithm type enumeration matching
+ * @param i An int
+ * @return The corresponding enumeration identifier
+ */
 int boxToAlgoType(int i)
 {
     switch (i)
@@ -17,6 +22,11 @@ int boxToAlgoType(int i)
     }
 }
 
+/**
+ * Int to matching algorithm type enumeration matching
+ * @param i An int
+ * @return The corresponding enumeration identifier
+ */
 int boxToMatchType(int i)
 {
     switch (i)
@@ -47,6 +57,9 @@ int boxToMatchType(int i)
     }
 }
 
+/**
+ * Interaction initializer - sets accepted file types for palettes as csv.
+ */
 static void initializePaletteFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
 {
     dialog.setDirectory(QDir::currentPath());
@@ -56,8 +69,13 @@ static void initializePaletteFileDialog(QFileDialog &dialog, QFileDialog::Accept
         dialog.setDefaultSuffix("csv");
 }
 
+/**
+ * Builds or rebuilds the dockable palette viewer.
+ * Create a new layout, and add it a colored button for each color in the palette.
+ * Create a new container widget, assign it the layout.
+ * Set the container as widget of the dockable palette viewer.
+ */
 void interface::buildWidgetViewer(){
-    // read palette
     dockLayout = new QGridLayout();
     dockLayout->setSpacing(2);
     for (QRgb col : p.getColors()){
@@ -66,7 +84,6 @@ void interface::buildWidgetViewer(){
         sprintf(cb, "background-color: rgb(%u, %u, %u)", qRed(col), qGreen(col), qBlue(col));
         std::string str(cb);
         QString color_string = QString::fromStdString(str); 
-
         colorButton->setStyleSheet(color_string);
         dockLayout->addWidget(colorButton);
     }
@@ -76,6 +93,9 @@ void interface::buildWidgetViewer(){
     
 }
 
+/**
+ * Main window definition
+ */
 interface::interface(QWidget *parent) : QMainWindow(parent)
 {
     scrollAreaEdited = new QScrollArea();
@@ -124,6 +144,7 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     matchType->addItem("Bayer 8x8 Ordered Dithering");
     matchType->move(15, 15);
 
+    // ADJUSTMENTS
     previewImageLabel->setBackgroundRole(QPalette::Base);
     previewImageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     previewImageLabel->setScaledContents(true);
@@ -132,11 +153,13 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
     scrollAreaEdited->setWidget(previewImageLabel);
     setCentralWidget(scrollAreaEdited);
 
-
     createActions();
     resize(QGuiApplication::primaryScreen()->availableSize());
 }
 
+/**
+ * Interaction initializer for file dialog/selection - sets the supported image types to jpeg and jpg
+ */
 static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
 {
 
@@ -156,8 +179,10 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         dialog.setDefaultSuffix("jpg");
 }
 
+/**
+ * An action-linked function that wraps the engine's reduce color functions
+ */
 void interface::generatePaletteFromImageMedianCut(){
-    // action-linked function that wraps the engine reduce color options
     int at = MEDIAN_CUT;
     bool ok;
     int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
@@ -165,8 +190,10 @@ void interface::generatePaletteFromImageMedianCut(){
     buildWidgetViewer();
 }
 
+/**
+ * An action-linked function that wraps the engine's reduce color functions
+ */
 void interface::generatePaletteFromImageOctree(){
-    // action-linked function that wraps the engine reduce color options
     int at = OCTREE;
     bool ok;
     int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
@@ -174,12 +201,19 @@ void interface::generatePaletteFromImageOctree(){
     buildWidgetViewer();
 }
 
+/**
+ * An action-linked function that loads a palette, and updates the palette viewer.
+ */
 bool interface::loadPalette(const QString &filename)
 {
     p.OpenPalette(filename.toStdString());
+    buildWidgetViewer();
     return true;
 }
 
+/**
+ * An action-linked function that loads and displays a new image.
+ */
 bool interface::loadFile(const QString &filename)
 {
     QImageReader reader(filename);
@@ -205,6 +239,9 @@ bool interface::loadFile(const QString &filename)
     return true;
 }
 
+/**
+ * An action-linked function to open a file
+ */
 void interface::open()
 {
     QFileDialog dialog(this, tr("Open File"));
@@ -215,6 +252,9 @@ void interface::open()
     }
 }
 
+/**
+ * An action-linked function that launched a file dialog to save the edited image.
+ */
 void interface::saveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save edited image", ""));
@@ -226,6 +266,10 @@ void interface::saveAs()
     }
 }
 
+/**
+ * An action-linked function that launched a file dialog to save the opened,
+ * generated or modified palette.
+ */
 void interface::savePalette()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Palette As...", ""));
@@ -238,6 +282,9 @@ void interface::savePalette()
     }
 }
 
+/**
+ * An action-linked function that opens a file dialog to pick a new palette to load.
+ */
 void interface::reloadPalette()
 {
     int mt = boxToMatchType(matchType->currentIndex());
@@ -251,6 +298,9 @@ void interface::reloadPalette()
     this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
 }
 
+/**
+ * Action and menu managing function
+ */
 void interface::createActions()
 {
     // File Menu
@@ -293,6 +343,9 @@ void interface::updateActions()
 {
 }
 
+/**
+ * An action-linked function to reset the preview of the edited image to the original image.
+ */
 void interface::resetImage()
 {
     previewImageLabel->setPixmap(QPixmap::fromImage(img));
@@ -313,6 +366,9 @@ void interface::fitToWindow()
     updateActions();
 }
 
+/**
+ * An action-linked function that opens a color dialog, allowing the user to add a color to the palette.
+ */
 void interface::addColor()
 {
     // OPEN COLOR PICKER
