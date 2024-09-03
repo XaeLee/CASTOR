@@ -87,7 +87,7 @@ void interface::buildWidgetViewer(){
         colorButton->setStyleSheet(color_string);
         dockLayout->addWidget(colorButton);
     }
-    container = new QWidget();
+    container = new QScrollArea();
     container->setLayout(dockLayout);
     paletteDock->setWidget(container);
     
