@@ -56,12 +56,41 @@ static void initializePaletteFileDialog(QFileDialog &dialog, QFileDialog::Accept
         dialog.setDefaultSuffix("csv");
 }
 
+void interface::buildWidgetViewer(){
+    // read palette
+    dockLayout = new QGridLayout();
+    dockLayout->setSpacing(2);
+    for (QRgb col : p.getColors()){
+        QPushButton *colorButton = new QPushButton();
+        char cb[100];
+        sprintf(cb, "background-color: rgb(%u, %u, %u)", qRed(col), qGreen(col), qBlue(col));
+        std::string str(cb);
+        QString color_string = QString::fromStdString(str); 
+
+        colorButton->setStyleSheet(color_string);
+        dockLayout->addWidget(colorButton);
+    }
+    container = new QWidget();
+    container->setLayout(dockLayout);
+    paletteDock->setWidget(container);
+    
+}
 
 interface::interface(QWidget *parent) : QMainWindow(parent)
 {
     scrollAreaEdited = new QScrollArea();
     previewImageLabel = new QLabel();
 
+    // PALETTE VIEWER
+    paletteDock = new QDockWidget(tr("Opened Palette"), parent);
+    buildWidgetViewer();
+
+    paletteDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    addDockWidget(Qt::RightDockWidgetArea, paletteDock);
+
+    
+
+    // ADAPT BUTTON
     adaptToPalette = new QPushButton("&Adapt To Palette", previewImageLabel);
     adaptToPalette->move(250, 15);
     adaptToPalette->show();
@@ -74,13 +103,14 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
                              initializePaletteFileDialog(dialog, QFileDialog::AcceptOpen);
                              while (dialog.exec() == QDialog::Accepted && !loadPalette(dialog.selectedFiles().constFirst()))
                              {
-                             }
-                         }
 
+                             }
+                            this->buildWidgetViewer();
+                         }
                          eng.AdaptToPaletteClosest(p, mt);
                          this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited)); });
 
-
+    // MATCHING ALGORITHM SELECTOR
     matchType = new QComboBox(previewImageLabel);
     matchType->addItem("Closest - RGB");
     matchType->addItem("Floyd Steinberg Dithering");
@@ -100,8 +130,8 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
 
     scrollAreaEdited->setBackgroundRole(QPalette::Dark);
     scrollAreaEdited->setWidget(previewImageLabel);
-    scrollAreaEdited->setVisible(false);
     setCentralWidget(scrollAreaEdited);
+
 
     createActions();
     resize(QGuiApplication::primaryScreen()->availableSize());
@@ -109,15 +139,8 @@ interface::interface(QWidget *parent) : QMainWindow(parent)
 
 static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
 {
-    // static bool firstDialog = true;
 
     dialog.setDirectory(QDir::currentPath());
-    /*
-    if (firstDialog) {
-        firstDialog = false;
-        const QStringList picturesLocations = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
-        dialog.setDirectory(picturesLocations.isEmpty() ? QDir::currentPath() : picturesLocations.last());
-    }*/
 
     QStringList mimeTypeFilters;
     const QByteArrayList supportedMimeTypes = acceptMode == QFileDialog::AcceptOpen
@@ -134,21 +157,21 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
 }
 
 void interface::generatePaletteFromImageMedianCut(){
+    // action-linked function that wraps the engine reduce color options
     int at = MEDIAN_CUT;
     bool ok;
-    int mt = boxToMatchType(matchType->currentIndex());
     int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
-    eng.ReduceColors(nbColors, at, mt);
-    this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
+    p = eng.ExtractPalette(nbColors, at);
+    buildWidgetViewer();
 }
 
 void interface::generatePaletteFromImageOctree(){
+    // action-linked function that wraps the engine reduce color options
     int at = OCTREE;
     bool ok;
-    int mt = boxToMatchType(matchType->currentIndex());
     int nbColors = QInputDialog::getInt(this, tr("Please provide information"), tr("Number of Colors Wanted:"), 6, 2, INT_MAX, 1, &ok);
-    eng.ReduceColors(nbColors, at, mt);
-    this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
+    p = eng.ExtractPalette(nbColors, at);
+    buildWidgetViewer();
 }
 
 bool interface::loadPalette(const QString &filename)
@@ -174,7 +197,6 @@ bool interface::loadFile(const QString &filename)
 
     img = newImage;
     eng.openImage(img);
-    scrollAreaEdited->setVisible(true);
     fitToWindowAct->setEnabled(true);
     previewImageLabel->setPixmap(QPixmap::fromImage(newImage));
     updateActions();
@@ -224,7 +246,7 @@ void interface::reloadPalette()
     while (dialog.exec() == QDialog::Accepted && !loadPalette(dialog.selectedFiles().constFirst()))
     {
     }
-
+    buildWidgetViewer();
     eng.AdaptToPaletteClosest(p, mt);
     this->previewImageLabel->setPixmap(QPixmap::fromImage(eng.edited));
 }
@@ -263,10 +285,8 @@ void interface::createActions()
 
     QMenu *miscMenu = menuBar()->addMenu(tr("&Misc."));
 
-    QAction *reduceColorsMedianCutAct = miscMenu->addAction(tr("Generate Palette - Median Cut"), this, &interface::generatePaletteFromImageMedianCut);
-    QAction *reduceColorsOctreeAct = miscMenu->addAction(tr("Generate Palette - Octree"), this, &interface::generatePaletteFromImageOctree);
-
-
+    reduceColorsMedianCutAct = miscMenu->addAction(tr("Generate Palette - Median Cut"), this, &interface::generatePaletteFromImageMedianCut);
+    reduceColorsOctreeAct = miscMenu->addAction(tr("Generate Palette - Octree"), this, &interface::generatePaletteFromImageOctree);
 }
 
 void interface::updateActions()
@@ -300,4 +320,5 @@ void interface::addColor()
     // BUILD QRGB FROM ITS DATA
     p.addColor(color.rgb());
     // ADD COLOR TO P
+    buildWidgetViewer();
 }

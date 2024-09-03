@@ -16,6 +16,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QInputDialog>
+#include <QtWidgets/QDockWidget>
 
 #include "engine.h"
 
@@ -25,12 +26,12 @@ class interface : public QMainWindow
 
 private slots:
     //open image - select a file, build engine around it. disaply it in main viewer.
-    //TODO
     void open();
     //saves edit under a given filename
-    //TODO
     void saveAs();
+    //saves the modified or extracted palette as a new .csv file
     void savePalette();
+    //fit the image viewer to the window
     void fitToWindow();
     void normalSize();
     void addColor();
@@ -38,6 +39,7 @@ private slots:
     void resetImage();
     void generatePaletteFromImageMedianCut();
     void generatePaletteFromImageOctree();
+    void buildWidgetViewer();
 
 private :
     void createMenus();
@@ -50,20 +52,24 @@ private :
     mypalette::palette p;
     QImage img;
 
-    QLabel *previewImageLabel;
     //edited/preview image
+    QLabel *previewImageLabel;
+
+    // main viewing area, main widget
     QScrollArea *scrollAreaEdited;
+    //dockable window for palette viewing
+    QDockWidget *paletteDock;
+    //layout for building & re-building palette display
+    QGridLayout *dockLayout;
+    //container palette widget : is the main widget of the dock, we create a new dockLayout to assign
+    // the container to refresh the palette display
+    QWidget *container;
 
     /**
-     * Launches reduceColors w params from the ComboBox
-    */
-    QPushButton *reduceColors;
-    /**
-     * Opens a dialog for the user to choose a source palette
+     * Opens a dialog for the user to choose a source palette if none is loaded
+     * then launches adaptation using $matchType algorithm
     */
     QPushButton *adaptToPalette;
-
-    QComboBox *algoType;
     QComboBox *matchType;
 
     QAction *saveAsAct;
@@ -72,7 +78,10 @@ private :
     QAction *addColorAct;
     QAction *loadReloadPalAct;
     QAction *resetImageAct;
-
+    
+    // Miscellaneous menu actions
+    QAction *reduceColorsMedianCutAct;
+    QAction *reduceColorsOctreeAct;
     double scaleFactor = 1;
 public:
     interface(QWidget *parent = nullptr);
