@@ -6,6 +6,11 @@
 using namespace std;
 using namespace mypalette;
 
+/**
+ * Opens and loads a palette from a csv path/filename.
+ * @param filename The path/filename of the csv file
+ * @return The opened palette as a mypalette::palette object
+ */
 palette palette::OpenPalette(string filename)
 {
     fstream file(filename, ios::in);
@@ -41,6 +46,9 @@ palette palette::OpenPalette(string filename)
     return *this;
 }
 
+/**
+ * Simple print function to display and check values from command line/debug
+ */
 void palette::display()
 {
     for (int i = 0; i < nbColors; i++)
@@ -50,6 +58,10 @@ void palette::display()
     }
 }
 
+/**
+ * Adds the given color to the palette, increases its color count.
+ * @param c The color to add to the palette as QRgb
+ */
 void palette::addColor(QRgb c)
 {
     this->colors.push_back(c);
@@ -66,6 +78,10 @@ int palette::getColorCount()
     return this->colors.size();
 }
 
+/**
+ * Saves the palette under filename, with correct csv formatting.
+ * @param filename The path/name under which the file must be saved
+ */
 void palette::savePalette(string filename)
 {
     std::ofstream file;

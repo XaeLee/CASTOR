@@ -5,7 +5,15 @@
 #include <iostream>
 #include <cmath>
 
-QRgb add_rgb(QRgb pix, QRgb error, float fact){
+/**
+ * For each RGB channel, adds an error multiplied by a factor to the base value.
+ * @param pix The original pixel/color
+ * @param error The error as a QRgb triplet
+ * @param fact The factor to amplify or tone down the error's impact
+ * @return A slightly edited version of the original color
+ */
+QRgb add_rgb(QRgb pix, QRgb error, float fact)
+{
     int red = qRed(pix) + qRed(error) * fact;
     red = red > 255 ? 255 : red;
     red = red < 0 ? 0 : red;
@@ -18,7 +26,15 @@ QRgb add_rgb(QRgb pix, QRgb error, float fact){
     return QColor(red, green, blue).rgb();
 }
 
-QRgb add_rgb(QRgb pix, vector<float> error, float fact){
+/**
+ * For each RGB channel, adds an error multiplied by a factor to the base value.
+ * @param pix The original pixel/color
+ * @param error The error as float vector
+ * @param fact The factor to amplify or tone down the error's impact
+ * @return A slightly edited version of the original color
+ */
+QRgb add_rgb(QRgb pix, vector<float> error, float fact)
+{
     int red = qRed(pix) + error[0] * fact;
     red = red > 255 ? 255 : red;
     red = red < 0 ? 0 : red;
@@ -31,7 +47,14 @@ QRgb add_rgb(QRgb pix, vector<float> error, float fact){
     return QColor(red, green, blue).rgb();
 }
 
-QRgb add_to_rgb(QRgb pix, float f){
+/**
+ * Adds a positive or negative shift in all three RGB channels of a color.
+ * @param pix The original color/pixel
+ * @param f The shift to be applied
+ * @return An edited version of the color, with all RGB values shifted of f.
+ */
+QRgb add_to_rgb(QRgb pix, float f)
+{
     int red = qRed(pix) + f;
     red = red > 255 ? 255 : red;
     red = red < 0 ? 0 : red;
@@ -45,6 +68,13 @@ QRgb add_to_rgb(QRgb pix, float f){
 
 }
 
+/**
+ * Using the basic 'closest color wins' matching algorithm,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestNeutral(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -57,6 +87,13 @@ void engine::AdaptToPaletteClosestNeutral(palette p){
     }
 }
 
+/**
+ * Using the basic 'closest color wins' matching algorithm and adding noise to smooth,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestNoise(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -70,7 +107,13 @@ void engine::AdaptToPaletteClosestNoise(palette p){
     }
 }
 
-//
+/**
+ * Using the Floyd-Steinberg algorithm,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestFloyd_Steinberg(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -87,7 +130,6 @@ void engine::AdaptToPaletteClosestFloyd_Steinberg(palette p){
             QRgb oldpix = cpy.pixel(x,y);
             QRgb newpix = matchBasic(cpy.pixel(x, y), p);
             this->edited.setPixel(x, y, newpix);
-            //QRgb error = RGB_color_distance(oldpix, newpix);
             vector<float> error = error_rgb(oldpix, newpix);
             if (x + 1 < nbCols){
                 if (y + 1 < nbRows)
@@ -104,6 +146,13 @@ void engine::AdaptToPaletteClosestFloyd_Steinberg(palette p){
     
 }
 
+/**
+ * Using the Jarvis algorithm,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestJarvis(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -151,7 +200,13 @@ void engine::AdaptToPaletteClosestJarvis(palette p){
     
 }
 
-
+/**
+ * Using the Atkinson algorithm,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestAtkinson(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -184,6 +239,13 @@ void engine::AdaptToPaletteClosestAtkinson(palette p){
     
 }
 
+/**
+ * Using the Sierra algorithm,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestSierra(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -226,6 +288,13 @@ void engine::AdaptToPaletteClosestSierra(palette p){
     }
 }
 
+/**
+ * Using the Sierra algorithm under Two Rows version,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestSierraTwoRows(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -262,6 +331,13 @@ void engine::AdaptToPaletteClosestSierraTwoRows(palette p){
 
 }
 
+/**
+ * Using the Sierra algorithm under Lite version,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestSierraLite(palette p){
     int nbCols = this->original.width();
     int nbRows = this->original.height();
@@ -287,6 +363,13 @@ void engine::AdaptToPaletteClosestSierraLite(palette p){
     }
 }
 
+/**
+ * Using the Bayer algorithm with a 4x4 matrix,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestBayer4x4(palette p) {
     size_t nbCols = original.width();
     size_t nbRows = original.height();
@@ -317,6 +400,13 @@ void engine::AdaptToPaletteClosestBayer4x4(palette p) {
     }
 }
 
+/**
+ * Using the Bayer algorithm with an 8x8 matrix,
+ * matches all pixels from the engine's image to the given palette, and saves
+ * them in the engine's edited image.
+ * @param p Color palette to match with
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosestBayer8x8(palette p) {
     size_t nbCols = original.width();
     size_t nbRows = original.height();

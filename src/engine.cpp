@@ -4,16 +4,30 @@
 using namespace std;
 using namespace mypalette;
 
+/**
+ * Creates an engine using an image filename, and opens it.
+ * @param filename The path to the chosen image
+ * @return Itself, the engine, with the image loaded
+ */
 engine::engine(string filename){
     this->original = QImage(filename.c_str());
     this->color_count = -1;
     this->edited = QImage(this->original.width(), this->original.height(), this->original.format());
 }
 
+/**
+ * Creates an empty engine
+ * @return Itself, an empty engine
+ */
 engine::engine(){
     this->color_count = 0;
 }
 
+/**
+ * Creates an engine using and loading a QImage.
+ * @param img The chosen image pre-loaded into a QImage.
+ * @return Itself, the engine, with the image loaded
+ */
 engine::engine(QImage img){
     this->original = img;
     this->color_count = -1;
@@ -23,17 +37,33 @@ engine::engine(QImage img){
 engine::~engine(){
 
 }
-
+/**
+ * Loads the given QImage as new original image
+ * @param img The chosen image pre-loaded into a QImage
+ * @return Nothing
+ */
 void engine::openImage(QImage img){
     this->original = img;
     this->color_count = -1;
     this->edited = QImage(this->original.width(), this->original.height(), this->original.format());
 }
 
+/**
+ * Saves the edited image under a chosen name and location.
+ * @param filename The name and path to save the image as
+ * @return Nothing
+ */
 void engine::saveEdit(string filename){
     this->edited.save(filename.c_str());
 }
 
+/**
+ * Wrapping function to redirect and call the appropriate palette
+ *  extraction function given the chosen algorithm type.
+ * @param n The number of colors to extract
+ * @param algotype The chosen algorithm type
+ * @return The extracted palette
+ */
 palette engine::ExtractPalette(int n, int algotype){
     switch (algotype)
     {
@@ -49,6 +79,13 @@ palette engine::ExtractPalette(int n, int algotype){
     }
 }
 
+/**
+ * Applies color reduction using chosen reduction algorithm and match type.
+ * @param n The number of colors to reduce to
+ * @param algotype The chosen reduction algorithm type
+ * @param matchType The chosen matching algorithm type
+ * @return Nothing
+ */
 void engine::ReduceColors(int n, int algotype, int matchType){
     switch (algotype)
     {
@@ -66,6 +103,13 @@ void engine::ReduceColors(int n, int algotype, int matchType){
     }
 }
 
+/**
+ * Wrapping function to redirect and call the appropriate matching function
+ * given the chosen matching algorithm.
+ * @param p The palette to match the image to
+ * @param matchType The chosen matching algorithm
+ * @return Nothing
+ */
 void engine::AdaptToPaletteClosest(palette p, int matchType){
     switch (matchType)
     {
@@ -105,6 +149,13 @@ void engine::AdaptToPaletteClosest(palette p, int matchType){
     }
 }
 
+/**
+ * Wrapping function : builds an octree looking for n colors, and reduces
+ * colors from the engine's loaded image - uses the chosen matching algorithm.
+ * @param n The number of colors to reduce to
+ * @param matchType The chosen matching algorithm
+ * @return Nothing
+ */
 void engine::ReduceColorsOctree(int n, int matchType){
     octree t(n);
     this->ediPal = t.reduceColors(this->original);
@@ -112,6 +163,12 @@ void engine::ReduceColorsOctree(int n, int matchType){
     this->AdaptToPaletteClosest(ediPal, matchType);    
 }
 
+/**
+ * Wrapping function : builds an octree and gets reduced color palette of n
+ * colors from the engine's loaded image.
+ * @param n The number of colors to get for the palette
+ * @return A palette with the n most used colors in the engine's loaded image.
+ */
 palette engine::ExtractPaletteOctree(int n){
     octree t(n);
     return t.reduceColors(this->original);
