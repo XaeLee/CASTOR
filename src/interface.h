@@ -40,6 +40,7 @@ private slots:
     void generatePaletteFromImageMedianCut();
     void generatePaletteFromImageOctree();
     void buildWidgetViewer();
+    void togglePaletteViewer();
 
 private :
     void createMenus();
@@ -78,6 +79,7 @@ private :
     QAction *addColorAct;
     QAction *loadReloadPalAct;
     QAction *resetImageAct;
+    QAction *toggleDockedPaletteViewer;
     
     // Miscellaneous menu actions
     QAction *reduceColorsMedianCutAct;

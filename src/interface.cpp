@@ -299,6 +299,15 @@ void interface::reloadPalette()
 }
 
 /**
+ * Action-linked function toggling the palette viewer's visibility
+ */
+void interface::togglePaletteViewer(){
+    bool toggled = toggleDockedPaletteViewer->isChecked();
+    paletteDock->setVisible(toggled);
+    updateActions();
+}
+
+/**
  * Action and menu managing function
  */
 void interface::createActions()
@@ -325,9 +334,13 @@ void interface::createActions()
     // View Menu
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
 
-    fitToWindowAct = viewMenu->addAction(tr("&Fit to Window"), this, &interface::fitToWindow);
-    fitToWindowAct->setEnabled(true);
+    toggleDockedPaletteViewer = viewMenu->addAction(tr("Palette Viewer"), this, &interface::togglePaletteViewer);
+    toggleDockedPaletteViewer->setCheckable(true);
+    toggleDockedPaletteViewer->setEnabled(true);
+    toggleDockedPaletteViewer->setChecked(true);
+    fitToWindowAct = viewMenu->addAction(tr("Fit to Window"), this, &interface::fitToWindow);
     fitToWindowAct->setCheckable(true);
+    fitToWindowAct->setEnabled(true);
     fitToWindowAct->setShortcut(tr("Ctrl+F"));
     
     resetImageAct = viewMenu->addAction(tr("Reset image preview"), this, &interface::resetImage);
